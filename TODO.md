@@ -207,41 +207,41 @@
 
 > **Amaç:** Geliştirme, test ve araştırma ortamını sağlamlaştır.
 
-- [ ] **0.1** Proje dizin yapısını oluştur
-  - [ ] `src/` — Ana kaynak kodları (Frida scriptleri, hook modülleri)
-  - [ ] `src/hooks/` — Hook modülleri (kamera, biometric API, keystore)
-  - [ ] `src/payloads/` — Enjeksiyon payloadları (sahte frame, replay buffer)
-  - [ ] `src/utils/` — Yardımcı fonksiyonlar (logging, hex dump, pattern match)
-  - [ ] `src/recon/` — Keşif & analiz scriptleri
-  - [ ] `docs/` — Teknik dokümantasyon, API haritaları, akış diyagramları
-  - [ ] `docs/api-maps/` — Hooklanacak API yüzeyleri listesi
-  - [ ] `docs/analysis/` — Phase 0.0 raporları
-  - [ ] `docs/flow-diagrams/` — Biyometrik akış şemaları
-  - [ ] `tests/` — Test senaryoları ve doğrulama scriptleri
-  - [ ] `tests/unit/` — Birim testleri
-  - [ ] `tests/integration/` — Entegrasyon testleri (emülatör üzerinde)
-  - [ ] `configs/` — Frida konfigürasyonları, hedef uygulama listeleri
-  - [ ] `tools/` — Harici araç wrapper'ları ve otomasyon
-  - [ ] `.local/` — Yerel notlar, test APK'ları, kişisel keyler (gitignore'da ✅)
-- [ ] **0.2** Tool-chain kurulumu & doğrulama
-  - [ ] Frida (CLI + Python bindings) kurulumu & versiyon kontrolü
-  - [ ] frida-tools & frida-server (hedef platform mimarisi: arm64/x86_64)
-  - [ ] objection kurulumu
-  - [ ] Android Studio + SDK Platform Tools (adb, aapt)
-  - [ ] Ghidra / IDA Free (statik analiz için)
-  - [ ] apktool, jadx, dex2jar
-  - [ ] Python 3.10+ environment (venv) + requirements.txt oluştur
-  - [ ] Node.js (Frida JS API için) + npm bağımlılıkları
-- [ ] **0.3** Emülatör / Test cihazı hazırlığı
-  - [ ] Root'lu Android emülatör (AVD veya Genymotion)
-  - [ ] frida-server push & çalıştırma otomasyonu (`tools/setup_frida_server.sh`)
-  - [ ] USB debugging / ADB over Wi-Fi yapılandırması
-  - [ ] Test cihazı profili oluştur (marka, model, Android versiyon, API level)
-- [ ] **0.4** Versiyon kontrol & CI
-  - [ ] `.gitignore` yapılandırması ✅
-  - [ ] Branch stratejisi: `main` → `develop` → `feature/*`
-  - [ ] Pre-commit hook'ları (secret leak kontrolü, lint)
-  - [ ] README.md güncelle (proje açıklaması, kurulum, kullanım)
+- [x] **0.1** Proje dizin yapısını oluştur
+  - [x] `src/` — Ana kaynak kodları (Frida scriptleri, hook modülleri)
+  - [x] `src/hooks/` — Hook modülleri (kamera, biometric API, keystore)
+  - [x] `src/payloads/` — Enjeksiyon payloadları (sahte frame, replay buffer)
+  - [x] `src/utils/` — Yardımcı fonksiyonlar (logging, hex dump, pattern match)
+  - [x] `src/recon/` — Keşif & analiz scriptleri
+  - [x] `docs/` — Teknik dokümantasyon, API haritaları, akış diyagramları
+  - [x] `docs/api-maps/` — Hooklanacak API yüzeyleri listesi
+  - [x] `docs/analysis/` — Phase 0.0 raporları
+  - [x] `docs/flow-diagrams/` — Biyometrik akış şemaları
+  - [x] `tests/` — Test senaryoları ve doğrulama scriptleri
+  - [x] `tests/unit/` — Birim testleri
+  - [x] `tests/integration/` — Entegrasyon testleri (emülatör üzerinde)
+  - [x] `configs/` — Frida konfigürasyonları, hedef uygulama listeleri
+  - [x] `tools/` — Harici araç wrapper'ları ve otomasyon
+  - [x] `.local/` — Yerel notlar, test APK'ları, kişisel keyler (gitignore'da ✅)
+- [x] **0.2** Tool-chain kurulumu & doğrulama
+  - [x] Frida (CLI + Python bindings) kurulumu & versiyon kontrolü
+  - [x] frida-tools & frida-server (hedef platform mimarisi: arm64/x86_64)
+  - [x] objection kurulumu
+  - [x] Android Studio + SDK Platform Tools (adb, aapt)
+  - [x] Ghidra / IDA Free (statik analiz için)
+  - [x] apktool, jadx, dex2jar
+  - [x] Python 3.10+ environment (venv) + requirements.txt oluştur
+  - [x] Node.js (Frida JS API için) + npm bağımlılıkları
+- [x] **0.3** Emülatör / Test cihazı hazırlığı
+  - [x] Root'lu Android emülatör (AVD veya Genymotion)
+  - [x] frida-server push & çalıştırma otomasyonu (`tools/setup_frida_server.sh`)
+  - [x] USB debugging / ADB over Wi-Fi yapılandırması
+  - [x] Test cihazı profili oluştur (marka, model, Android versiyon, API level)
+- [x] **0.4** Versiyon kontrol & CI
+  - [x] `.gitignore` yapılandırması ✅
+  - [x] Branch stratejisi: `main` → `develop` → `feature/*`
+  - [x] Pre-commit hook'ları (secret leak kontrolü, lint)
+  - [x] README.md güncelle (proje açıklaması, kurulum, kullanım)
 
 ---
 
