@@ -1,0 +1,55 @@
+# ========================
+# Sentinel Hook - .gitignore
+# ========================
+
+# ---- Local / Private ----
+.local/
+.local/**
+
+# ---- macOS ----
+.DS_Store
+*.swp
+*.swo
+*~
+
+# ---- Node / NPM ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ---- Frida ----
+*.dex
+*.apk
+*.ipa
+*.so
+*.dylib
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.xcworkspace/
+*.xcuserdata/
+
+# ---- Logs & Temp ----
+logs/
+*.log
+tmp/
+temp/
+
+# ---- Secrets ----
+*.pem
+*.key
+*.cert
+*.env
+.env.local

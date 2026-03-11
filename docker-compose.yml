@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  sentinel-env:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentinel_sandbox
+    image: sentinel-hook:latest
+    # USB cihazlarına erişim gerekliliği (Frida için mobil cihaza bağlantı şart)
+    privileged: false
+    # Privileged kullanmak yerine doğrudan USB portlarını map ediyoruz (Least Privilege / En Az Yetki ilkesi)
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    volumes:
+      # Sentinel Payloadları ve Sonuçları dışarı aktarmak için mount
+      - ./src:/app/src
+      - ./tests:/app/tests
+      # İki yönlü izolasyon: Kalıntı bırakmamak için ro (read-only)
+      # Ancak test dosyalarının üretimi için spesifik bir rw volume var
+      - ./docs:/app/docs:ro
+    network_mode: bridge
+    ports:
+      - "27042:27042"
+    restart: unless-stopped
+    command: ["/bin/bash"]
+    stdin_open: true # interactive shell için
+    tty: true

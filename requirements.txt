@@ -1,0 +1,3 @@
+frida-tools==16.2.1
+frida==16.2.1
+objection
