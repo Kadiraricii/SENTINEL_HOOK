@@ -249,46 +249,39 @@
 
 > **Amaç:** Hedef uygulamayı tanı; hangi API'ler, kütüphaneler ve doğrulama akışları kullanılıyor, haritala.
 
-- [ ] **1.1** Hedef uygulama seçimi & temin
-  - [ ] Basit kasa uygulaması veya biyometrik kilit galerisi tespit et
-  - [ ] APK'yı güvenli biçimde indir (`.local/apks/`)
-  - [ ] Uygulamayı emülatöre kur ve normal akışı test et
-  - [ ] Ekran kayıtları ile "normal akış" belgelenmesi
-- [ ] **1.2** Statik Analiz — APK Decompilation
-  - [ ] apktool ile decode: `apktool d target.apk`
-  - [ ] jadx ile Java/Kotlin kaynak çıktısı
-  - [ ] `AndroidManifest.xml` analizi
-    - [ ] İzinler (CAMERA, USE_BIOMETRIC, USE_FINGERPRINT)
-    - [ ] Activity / Service / BroadcastReceiver haritası
-    - [ ] Content Provider'lar
-  - [ ] `docs/api-maps/manifest-analysis.md` oluştur
-- [ ] **1.3** Statik Analiz — Biyometrik API Kullanımı
-  - [ ] `BiometricPrompt` kullanım noktalarını bul
-  - [ ] `FingerprintManager` (deprecated) kullanılıyor mu kontrol
-  - [ ] `CryptoObject` bağımlılığı var mı incele
-  - [ ] Custom biyometrik callback sınıflarını tespit et
-  - [ ] `onAuthenticationSucceeded` / `onAuthenticationFailed` akışını haritala
-  - [ ] `docs/flow-diagrams/biometric-auth-flow.md` oluştur
-- [ ] **1.4** Statik Analiz — Kamera API Kullanımı
-  - [ ] Camera2 API (`CameraDevice`, `CameraCaptureSession`) kullanımı
-  - [ ] CameraX kullanımı
-  - [ ] `SurfaceView` / `TextureView` baca noktaları
-  - [ ] Üçüncü parti yüz tanıma SDK tespiti (ML Kit, FaceNet, OpenCV)
-  - [ ] Native (JNI/NDK) kamera erişimi var mı
-  - [ ] `docs/api-maps/camera-surface-map.md` oluştur
-- [ ] **1.5** Statik Analiz — Native Katman
-  - [ ] `.so` kütüphanelerini listele (`lib/`)
-  - [ ] Ghidra ile native fonksiyon analizi
-  - [ ] JNI bridge fonksiyonlarını tespit et
-  - [ ] Anti-tamper / integrity check mekanizmaları var mı
-  - [ ] `docs/api-maps/native-layer-analysis.md` oluştur
-- [ ] **1.6** Dinamik Keşif — Runtime Observation
-  - [ ] `frida-ps -U` ile process teyidi
-  - [ ] `objection explore` ile genel yapıyı keşfet
-  - [ ] `android hooking list classes` — ilgili sınıfları filtrele
-  - [ ] `android hooking list class_methods <class>` — metod listesi
-  - [ ] Runtime'da çağrılan fonksiyonları logla (ilk trace)
-  - [ ] Trace çıktısını `docs/runtime-traces/` altına kaydet
+- [x] **1.1** Hedef uygulama seçimi & temin
+  - [x] Basit kasa uygulaması veya biyometrik kilit galerisi tespit et (DummyBank Projesi Yaratıldı)
+  - [x] APK/IPA'yı güvenli biçimde indir veya derle
+  - [x] Uygulamayı emülatöre kur ve normal akışı test et
+  - [x] Ekran kayıtları ile "normal akış" belgelenmesi
+- [x] **1.2** Statik Analiz — İkili Dosya Decompilation (IPA/APK)
+  - [x] Uygulama dosyalarının decode edilmesi
+  - [x] Java/Kotlin/Swift kaynak çıktısı çıkarımı
+  - [x] İzinler (CAMERA, USE_BIOMETRIC, FaceIDUsage)
+  - [x] Application Sandbox haritası
+- [x] **1.3** Statik Analiz — Biyometrik API Kullanımı
+  - [x] `BiometricPrompt` / `LAContext` kullanım noktalarını bul
+  - [x] `CryptoObject` veya SecureEnclave bağımlılığını incele
+  - [x] Custom biyometrik callback sınıflarını tespit et
+  - [x] Doğrulama (Success/Fail) akışını haritala
+  - [x] `docs/flow-diagrams/biometric-auth-flow.md` oluştur
+- [x] **1.4** Statik Analiz — Kamera API Kullanımı
+  - [x] Camera2 API / AVCaptureSession kullanımı
+  - [x] CoreMedia / MLKit yapay zeka entegrasyonu
+  - [x] CVPixelBuffer / SurfaceView baca noktaları
+  - [x] Liveness SDK tespiti
+  - [x] `docs/api-maps/camera-surface-map.md` oluştur
+- [x] **1.5** Statik Analiz — Native Katman
+  - [x] C/C++ kütüphanelerini listele (.so / dylib)
+  - [x] Native katmanda şifreleme ve JNI geçişleri analizi
+  - [x] Anti-tamper / Jailbreak check mekanizmaları
+  - [x] `docs/api-maps/native-layer-analysis.md` oluştur
+- [x] **1.6** Dinamik Keşif — Runtime Observation
+  - [x] `frida-ps -U` ile process teyidi
+  - [x] `class_dumper.js` ile Objective-C/Java sınıflarını listele
+  - [x] `method_tracer.js` ile LAContext / BiometricManager metotlarını izle
+  - [x] Runtime'da çağrılan fonksiyonları logla (ilk trace)
+  - [x] Trace çıktısını `docs/runtime-traces/` altına kaydet
 
 ---
 
@@ -491,11 +484,11 @@
   - [ ] frida-server iOS kurulumu
   - [ ] Xcode + iOS SDK
   - [ ] `class-dump` / `dsdump` kurulumu
-- [ ] **8.2** LocalAuthentication Framework Bypass
-  - [ ] `LAContext.evaluatePolicy()` hook
-  - [ ] Completion handler'a `(true, nil)` enjekte et
-  - [ ] `canEvaluatePolicy()` → `true` döndür
-  - [ ] `src/hooks/ios/local_auth_bypass.js` oluştur
+- [x] **8.2** LocalAuthentication Framework Bypass
+  - [x] `LAContext.evaluatePolicy()` hook
+  - [x] Completion handler'a `(true, nil)` enjekte et
+  - [x] `canEvaluatePolicy()` → `true` döndür
+  - [x] `src/hooks/ios/local_auth_bypass.js` oluştur
 - [ ] **8.3** iOS Kamera Bypass
   - [ ] `AVCaptureSession` / `AVCaptureVideoDataOutput` hook
   - [ ] `CMSampleBuffer` manipülasyonu
