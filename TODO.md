@@ -322,18 +322,18 @@
 
 > **Amaç:** Uygulamaya gerçek kamera yerine statik fotoğraf veya önceden kaydedilmiş video akışı (replay) enjekte et.
 
-- [ ] **3.1** Kamera API Hook Noktalarını Belirle
-  - [ ] `CameraDevice.StateCallback.onOpened()` hook noktası
-  - [ ] `CameraCaptureSession.CaptureCallback` hook noktası
-  - [ ] `ImageReader.OnImageAvailableListener` hook noktası
-  - [ ] `SurfaceTexture.onFrameAvailable()` hook noktası
-  - [ ] Hangi noktanın en etkili olduğunu dokümante et
-- [ ] **3.2** Statik Fotoğraf Enjeksiyonu
-  - [ ] `.local/test-faces/` klasörüne test yüzü görselleri ekle
-  - [ ] Görseli YUV_420_888 formatına çeviren yardımcı fonksiyon yaz (`src/utils/image_converter.js`)
-  - [ ] `ImageReader` çıktısını sahte frame ile değiştiren hook (`src/hooks/camera_frame_inject.js`)
-  - [ ] Frame boyutu & format uyumluluk kontrolü
-  - [ ] Enjeksiyonun ekranda doğru görüntülendiğini doğrula
+- [x] **3.1** Kamera API Hook Noktalarını Belirle
+  - [x] `AVCaptureSession` / `CameraDevice` hook noktası
+  - [x] `AVCaptureVideoDataOutputSampleBufferDelegate` hook noktası
+  - [x] `CMSampleBuffer` / `ImageReader` hook noktası
+  - [x] `SurfaceTexture` / `CVPixelBuffer` hook noktası
+  - [x] Hangi noktanın en etkili olduğunu dokümante et
+- [x] **3.2** Statik Fotoğraf Enjeksiyonu
+  - [x] `.local/test-faces/` klasörüne test yüzü görselleri ekle (Hacker.jpg)
+  - [x] Görseli pixel formatına çeviren native köprü (`receiveHackerImage`)
+  - [x] Frameleri sahte frame ile değiştiren hook (`src/hooks/ios/camera_bypass.js`)
+  - [x] Frame boyutu & format uyumluluk kontrolü (CGImage köprüsü)
+  - [x] Enjeksiyonun ekranda doğru görüntülendiğini doğrula
 - [ ] **3.3** Video Replay Attack
   - [ ] Gerçek kameradan N frame yakala ve kaydet (`src/payloads/frame_recorder.js`)
   - [ ] Kaydedilmiş frame'leri sırayla replay eden modül (`src/payloads/frame_replayer.js`)
