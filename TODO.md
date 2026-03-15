@@ -357,17 +357,16 @@
 
 > **Amaç:** Uygulamanın kullandığı yüz tanıma / liveness detection motorunu bypass et.
 
-- [ ] **4.1** ML Kit Face Detection Bypass
-  - [ ] `com.google.mlkit.vision.face.FaceDetector` hook
-  - [ ] `process()` metodunun çıktısını manipüle et
-  - [ ] Sahte `Face` nesnesi oluştur (landmark'lar, bounding box)
-  - [ ] `src/hooks/mlkit_face_bypass.js` oluştur
-- [ ] **4.2** Liveness Detection Bypass
-  - [ ] Liveness check mekanizmasını reverse engineer et
-  - [ ] Blink detection bypass (göz kırpma doğrulaması)
-  - [ ] Head movement bypass (kafa hareketi doğrulaması)
-  - [ ] Smile detection bypass
-  - [ ] Depth map / 3D yüz kontrolü bypass (varsa)
+- [x] **4.1** Yapay Zeka Vision Framework/ML Kit Bypass
+  - [x] Apple Vision `VNDetectFaceRectanglesRequest` sonuçlarını manipüle et
+  - [x] Google MLKit `com.google.mlkit.vision.face.FaceDetector` sonuçlarını manipüle et
+  - [x] `FaceObservation` / Sahte `Face` nesnesi oluştur (landmark'lar, bounding box)
+  - [x] `src/hooks/ios/vision_bypass.js` ve `src/hooks/android/mlkit_face_bypass.js`
+- [x] **4.2** Liveness Detection (Göz Kırpma / Gülümseme) Bypass
+  - [x] Liveness check mekanizmasını reverse engineer et
+  - [x] Blink detection bypass (Göz kırpma - ML Probability %100'e çekme)
+  - [x] Head movement / Smile detection bypass
+  - [x] `src/hooks/android/liveness_logic_bypass.js` oluşturuldu
   - [ ] `src/hooks/liveness_bypass.js` oluştur
 - [ ] **4.3** FaceNet / Custom Embedding Bypass
   - [ ] Yüz embedding vektörü karşılaştırma fonksiyonunu bul
