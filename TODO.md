@@ -385,29 +385,25 @@
 
 > **Amaç:** Hedef uygulama Frida/root/hooking tespiti yapıyorsa, bunları devre dışı bırak.
 
-- [ ] **5.1** Root Detection Bypass
-  - [ ] SafetyNet / Play Integrity API hook'ları
-  - [ ] RootBeer kütüphanesi bypass
-  - [ ] `su` binary kontrol fonksiyonlarını hook'la
-  - [ ] `Build.TAGS` / `Build.TYPE` spooflama
-  - [ ] `/system/app/Superuser.apk` dosya kontrol bypass
-  - [ ] `src/hooks/root_detection_bypass.js` oluştur
-- [ ] **5.2** Frida Detection Bypass
-  - [ ] Port tarama tespitini engelle (frida-server default port: 27042)
-  - [ ] `/proc/self/maps` hook — frida-agent.so gizle
-  - [ ] `frida-gadget` string tespitini bypass et
-  - [ ] `ptrace` anti-debug bypass
-  - [ ] Named pipe / D-Bus kontrolü bypass
-  - [ ] `src/hooks/frida_detection_bypass.js` oluştur
-- [ ] **5.3** SSL Pinning Bypass
-  - [ ] OkHttp CertificatePinner bypass
-  - [ ] TrustManager hook
-  - [ ] Network Security Config override
-  - [ ] `src/hooks/ssl_pinning_bypass.js` oluştur
-- [ ] **5.4** Integrity Check Bypass
-  - [ ] APK signature verification hook
-  - [ ] Checksum kontrolü bypass (dex, so dosyaları)
-  - [ ] `src/hooks/integrity_bypass.js` oluştur
+- [x] **5.1** Root/Jailbreak Detection Bypass
+  - [x] Sileo/Cydia, SuperSU dizinleri bypass (`stat`, `fopen`, `access` hook)
+  - [x] Native katmanda `ENOENT` sahteciliği
+  - [x] `su` binary kontrol fonksiyonlarını ez
+  - [x] `src/hooks/root_jailbreak_bypass.js` oluşturuldu
+- [x] **5.2** Frida & Debug Detection Bypass
+  - [x] Port tarama tespitini engelle etrafından dolan (Mute)
+  - [x] `/proc/self/maps` hook — frida-agent.so modüllerini gizle
+  - [x] `sysctl` ve `Debug` Anti-Debugging API'lerini kör et
+  - [x] `src/hooks/frida_detection_bypass.js` oluşturuldu
+- [x] **5.3** Universal SSL Pinning Bypass (Optional ama gerekli)
+  - [x] iOS: `SecTrustEvaluateWithError` hook
+  - [x] Android: `TrustManagerImpl` hook
+  - [x] Ağ hareketlerinin izlenmesine (Burp Suite vs.) imkan tanı
+  - [x] `src/hooks/ssl_pinning_bypass.js` oluşturuldu
+- [x] **5.4** Integrity Check Bypass
+  - [x] APK signature verification hook
+  - [x] Checksum kontrolü bypass (dex, so dosyaları ve Mach-O)
+  - [x] `src/hooks/integrity_bypass.js` oluşturuldu
 
 ---
 
