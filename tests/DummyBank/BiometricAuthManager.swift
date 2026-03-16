@@ -1,5 +1,6 @@
 import SwiftUI
 import LocalAuthentication
+import Combine
 
 class BiometricAuthManager: ObservableObject {
     @Published var isAuthenticated = false
@@ -7,6 +8,25 @@ class BiometricAuthManager: ObservableObject {
     
     // Uygulamanın entry point auth kontrol fonksiyonu (Frida ile hedef alacağımız fonksiyon bu!)
     func authenticateUser() {
+        
+        // --- PHASE 5: GÜVENLİK TESTİ (JAILBREAK TESPİT SİMÜLASYONU) ---
+        // Uygulama açılırken cihazda Cydia var mı diye dosyaları kontrol eder.
+        // Simülatörde Cydia yerine Mac'in '/Applications/Safari.app' klasörüne bakacağız.
+        let jailbreakFilePath = "/Applications/Safari.app"
+        var isJailbroken = false
+        
+        // C-Level stat veya FileManager araması...
+        if FileManager.default.fileExists(atPath: jailbreakFilePath) {
+            isJailbroken = true
+        }
+        
+        if isJailbroken {
+            // Eğer Safari (Cydia varsayıyoruz) varsa, uygulama kendini kilitler!
+            self.errorMessage = "🚨 GÜVENLİK İHLALİ: Cihazınız Jailbreak'li! Giriş Engellendi."
+            return
+        }
+        // -------------------------------------------------------------
+        
         let context = LAContext()
         var error: NSError?
         
