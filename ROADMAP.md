@@ -1,59 +1,59 @@
-# 🗺️ Sentinel Hook - Development Roadmap
+# 🗺️ Sentinel Hook — Development Roadmap
 
-> Bu doküman, Sentinel projesinin gelişim evrelerini ve siber güvenlik araştırmalarındaki hedeflerini belirtir. 
-> Tamamlanan fazlar (🟢), Üzerinde Çalışılanlar (🟡), İleride Planlananlar (⚪️) şeklinde belirtilmiştir.
+> This document outlines the development phases of Sentinel Hook and its goals in security research.
+> 🟢 Completed · 🟡 In Progress · ⚪️ Planned
 
 ---
 
-## 🟢 PHASE 0: Mimari ve Temel Kurulum
-*   **Hedef:** Projenin Frida ve Python altyapısını kurmak, dosya hiyerarşisini belirlemek.
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** Repo kuruldu, `src/recon` modülleri ve C/Swift uyumluluk katmanları test edildi.
+## 🟢 PHASE 0: Architecture & Foundation
+- **Goal:** Establish the Frida + Python infrastructure and define the directory hierarchy.
+- **Status:** Complete.
+- **Actions:** Repository initialized, `src/recon` modules scaffolded, C/Swift compatibility layer tested.
 
-## 🟢 PHASE 1: Hedef Zemin Analizi (Reconnaissance)
-*   **Hedef:** Bankacılık uygulamalarında biyometrik çağrıları tespit etmek.
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** Uygulamaların `Info.plist` (iOS) ve `Manifest.xml` (Android) izinleri tarandı. ObjC Runtime dump scriptleri (`class_dumper.js`) yazıldı.
+## 🟢 PHASE 1: Target Reconnaissance
+- **Goal:** Identify biometric call surfaces in banking applications.
+- **Status:** Complete.
+- **Actions:** `Info.plist` (iOS) and `Manifest.xml` (Android) permissions audited. ObjC Runtime dump scripts (`class_dumper.js`) written.
 
-## 🟢 PHASE 2: Logical Biometric Bypass (True/False Spoofing)
-*   **Hedef:** Ekrana "Yüz Onaylandı" veya "Parmak İzi Kabul Edildi" Boolean `true` cevabı göndermek.
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** `LocalAuthentication` (Apple) ve `BiometricPrompt` (Google) arayüzlerindeki Callback fonksiyonlarına kanca atıldı. Cihazdaki şifreleme anahtarlarının (CryptoObject) donanım kilidi kırıldı.
+## 🟢 PHASE 2: Logical Biometric Bypass
+- **Goal:** Force a `true` boolean response for face or fingerprint authentication callbacks.
+- **Status:** Complete.
+- **Actions:** `LocalAuthentication` (Apple) and `BiometricPrompt` (Google) callback hooks implemented. Hardware-bound `CryptoObject` key lock broken.
 
 ## 🟢 PHASE 3: Camera & Sensor Spoofing
-*   **Hedef:** Canlı yayın kamerasının okuduğu veriyi (Frame) ele geçirmek ve sahte bir statik/video enjekte etmek.
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** `AVCaptureSession` (iOS) ve `CameraX` (Android) için bellek (`CVPixelBuffer` ve `ImageReader`) müdahaleleri yapıldı. Sisteme sahte Hacker vesikalıkları ve 60 FPS sahte video dizilimleri (`video_replayer.js`) başarıyla pompalandı.
+- **Goal:** Intercept live camera frames and inject a static image or pre-recorded video.
+- **Status:** Complete.
+- **Actions:** `AVCaptureSession` (iOS) and `CameraX` (Android) in-memory `CVPixelBuffer` / `ImageReader` swaps implemented. Fake face images and 60 FPS video sequences (`video_replayer.js`) successfully injected.
 
-## 🟢 PHASE 4: AI & Machine Learning Muting (Liveness Bypass)
-*   **Hedef:** Cihazda fiziksel bir yüz yokken bile (tamamen karanlık kamerada) Yapay Zekayı ikna etmek.
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** Apple CoreML (`Vision`) ve Google `MLKit` C++ katmanlarında kandırıldı. Yapay Zekadan gelen *0 probability* uyarısı ezilerek *0.99 (Başarılı)* olarak döndürüldü. Ayrıca `cv::dnn` (OpenCV) modülleri için bypass yazıldı.
+## 🟢 PHASE 4: AI & Machine Learning Muting
+- **Goal:** Receive a "Live Human Face" approval even with a completely dark / empty camera frame.
+- **Status:** Complete.
+- **Actions:** Apple CoreML (`Vision`) and Google `MLKit` C++ layers deceived. Zero probability outputs overridden to `0.99 (Success)`. OpenCV `cv::dnn` modules also patched.
 
 ## 🟢 PHASE 5: Stealth & Anti-Tamper Evasion
-*   **Hedef:** Sentinel Hook ajanının ve telefonun güvenlik açıklarının sistemden gizlenmesi (Görünmezlik pelerini).
-*   **Durum:** Tamamlandı.
-*   **Aksiyonlar:** 
-    - Uygulamanın `/Applications/Cydia.app` ve `/system/xbin/su` gibi dosyaları taraması, C-Level `fopen/stat` kancalarıyla `ENOENT` (Bulunamadı) hatasına sürüklenerek Root/Jailbreak tespiti aşıldı.
-    - SSL Pinning korumaları sertifika zincirini yok sayacak şekilde (`TrustManager`, `SecTrustEvaluate`) yamalandı.
-    - Kendi dosyası (`frida-agent.so`) okunduğunda kendini gizleyen anti-frida bypassı yazıldı.
-    - Uygulama İmza Tespiti (Integrity Check) atlatıldı.
+- **Goal:** Conceal the Sentinel Hook agent and mask all device compromise indicators.
+- **Status:** Complete.
+- **Actions:**
+  - Root/Jailbreak detection bypassed via `NSFileManager` and C-level `fopen/stat` hooks returning `ENOENT`.
+  - SSL Pinning neutralized via `TrustManager` and `SecTrustEvaluate` patches.
+  - Anti-Frida detection bypassed by suppressing `/proc/self/maps` anomaly reads.
+  - Application integrity checks (APK signature / `SecStaticCodeCheckValidity`) defeated.
 
 ---
 
-## 🟡 PHASE 6: Otomasyon, CLI & Dashboard
-*   **Hedef:** Yazılan bu script kompleksini yönetmek için bir komuta merkezi oluşturmak.
-*   **Durum:** Devam Ediyor.
-*   **Aksiyonlar (Planlanan):**
-    - `launcher.py` içerisine ArgParse ile CLI özellikleri eklenecek.
-    - Tüm Bypass'ları tek seferde sisteme süren `ALL-IN-ONE` enjektörü yazılacak.
-    - (Opsiyonel) Siber Güvenlik Uzmanlarının testlerini kolaylaştırmak için basit bir FastAPI/Flask web arayüzü kurulacak. 
+## 🟡 PHASE 6: Automation, CLI & Dashboard
+- **Goal:** Build a command center to orchestrate the full bypass stack efficiently.
+- **Status:** In Progress.
+- **Planned Actions:**
+  - ArgParse-based CLI via `launcher.py` with target selection and module flags.
+  - `--bypass ALL` flag to inject every module in correct order in one command.
+  - (Optional) Lightweight FastAPI / Flask web dashboard for session management.
 
 ---
 
-## ⚪️ PHASE 7: Advanced Kernel Evasion (Gelecek Vizyonu)
-*   **Hedef:** Geleceğin mobil tehditleri için Kernel (Çekirdek) seviyesi Rootkit entegrasyonu.
-*   **Durum:** Planlanıyor.
-*   **Aksiyonlar (Planlanan):**
-    - ARM64e donanım seviyesi PAC (Pointer Authentication Code) Bypass.
-    - eBPF kullanarak Android ağ / dosya sistemi tespiti atlatma.
+## ⚪️ PHASE 7: Advanced Kernel Evasion *(Future Vision)*
+- **Goal:** Kernel-level rootkit integration for next-generation mobile threat research.
+- **Status:** Planned.
+- **Planned Actions:**
+  - ARM64e hardware-level PAC (Pointer Authentication Code) bypass.
+  - eBPF-based Android network and filesystem detection evasion.

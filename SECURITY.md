@@ -1,30 +1,29 @@
-# 🔒 Güvenlik Politikası (SECURITY POLICY)
+# 🔒 Security Policy
 
-## Desteklenen Sürümler
+## Supported Versions
 
-| Versiyon | Destek Durumu |
-| :------- | :------------ |
-| 1.0.x    | ✅ Aktif destek |
-| < 1.0    | ❌ Destek yok  |
-
----
-
-## 🐛 Güvenlik Açığı Bildirme
-
-Sentinel Hook'un **kendi altyapısında** bir güvenlik açığı keşfettiyseniz (örneğin: scriptin hedeflenmeyen sistemlere erişim sağlaması, Python katmanında RCE riski vb.), lütfen bunu herkese açık bir Issue olarak paylaşmayın.
-
-Bunun yerine:
-1. Açığı detaylıca belgeleyin (PoC kodu varsa ekleyin)
-2. `security@sentinel-hook.local` adresine (veya GitHub Private Vulnerability Reporting üzerinden) gönderin
-3. 72 saat içinde yanıt alacaksınız
-
-**Responsible Disclosure** ilkesine uygun hareket ettiğiniz için şimdiden teşekkür ederiz.
+| Version | Support Status |
+|:--------|:--------------|
+| 1.0.x   | ✅ Actively supported |
+| < 1.0   | ❌ No support |
 
 ---
 
-## ⚠️ Kapsam Dışı Konular
+## 🐛 Reporting a Vulnerability
 
-Aşağıdakiler bu güvenlik politikasının kapsamı **dışındadır:**
-- Projede kasıtlı olarak tasarlanan bypass mekanizmalarının "açık" olarak raporlanması  
-  *(Bunlar projenin amacıdır, hata değil)*
-- Üçüncü taraf kütüphanelerin (Frida, mitmproxy) kendi açıkları
+If you discover a security vulnerability **within Sentinel Hook's own infrastructure** (e.g., a script that unintentionally accesses systems beyond its intended scope, a Python-layer RCE risk, etc.), please **do not** open a public Issue.
+
+Instead:
+1. Document the vulnerability in detail (include a PoC if available).
+2. Report it via **GitHub Private Vulnerability Reporting** on this repository.
+3. You will receive a response within **72 hours**.
+
+Thank you for practicing responsible disclosure.
+
+---
+
+## ⚠️ Out of Scope
+
+The following are **not** covered by this security policy:
+- Reporting the bypass mechanisms themselves as "vulnerabilities" — they are the intended functionality of this research tool.
+- Vulnerabilities in third-party dependencies (Frida, mitmproxy, etc.) — report those to the respective upstream projects.

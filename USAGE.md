@@ -1,8 +1,8 @@
 <div align="center">
 
-# 📖 USAGE — Kullanım Rehberi
+# 📖 USAGE — Test & Operations Guide
 
-### Sentinel Hook · Test ve Operasyon El Kitabı
+### Sentinel Hook · Module-by-Module Testing Manual
 
 [![Frida](https://img.shields.io/badge/Frida-17.9.1-00C9FF?style=for-the-badge&logo=python&logoColor=white)](https://frida.re)
 [![iOS](https://img.shields.io/badge/iOS-16%2B-black?style=for-the-badge&logo=apple)](https://developer.apple.com)
@@ -12,117 +12,117 @@
 
 ---
 
-## 📂 Modül Haritası
+## 📂 Module Map
 
 ```
 src/hooks/
-├── 01_biometrics/       ← Phase 2: FaceID / BiometricPrompt kırıcılar
-├── 02_camera/           ← Phase 3: Kamera sensörü spoofing
-├── 03_ml_vision/        ← Phase 4: Yapay Zeka / ML blindspot
-└── 04_anti_tamper/      ← Phase 5: Görünmezlik duvarı
+├── 01_biometrics/       ←  Phase 2: FaceID / BiometricPrompt breakers
+├── 02_camera/           ←  Phase 3: Camera sensor spoofing
+├── 03_ml_vision/        ←  Phase 4: AI / ML blindspot injection
+└── 04_anti_tamper/      ←  Phase 5: Stealth layer
 ```
 
 ---
 
-## 🔬 Hazırlık: Cihazı Frida'ya Tanıtmak
+## 🔬 Setup: Connecting Your Device to Frida
 
-Testlere başlamadan önce Frida'nın cihazı gördüğünden emin olun:
+Before running any tests, confirm Frida can see your device:
 
 ```bash
-# Sanal ortamı aktive et
+# Activate virtual environment
 source .venv/bin/activate
 
-# Bağlı cihaz uygulamalarını listele
+# List all running apps on connected device
 frida-ps -Uai
 ```
 
-Çıktıda `DummyBank` (veya hedef uygulamanın adı/ID'si) görünmelidir.
+You should see `DummyBank` (or your target app name/bundle ID) in the output.
 
 ---
 
-## 🔥 Modül Bazlı Test Senaryoları
+## 🔥 Module-by-Module Test Scenarios
 
-### 📦 Bölüm 1 — Biyometrik Bypass `01_biometrics/`
+### 📦 Section 1 — Biometric Bypass `01_biometrics/`
 
-**Amaç:** Face ID / Parmak İzi eşleşmesi olmadan `"Kimlik Doğrulandı"` yanıtı almak.
+**Goal:** Receive an `"Authentication Successful"` response without any Face ID / Fingerprint match.
 
 ```bash
 frida -U -n DummyBank -l src/hooks/01_biometrics/local_auth_bypass.js
 ```
 
-**Beklenen Terminal Çıktısı:**
+**Expected Terminal Output:**
 ```
-[🌟] SENTINEL: Biyometrik Bypass Aktif
+[🌟] SENTINEL: Biometric Bypass Active
 [+] evaluatePolicy hooked → return TRUE forced
-[💥] Kimlik doğrulama başarılı (Bypass)!
+[💥] Authentication succeeded (Bypass)!
 ```
 
 > [!TIP]
-> Ardından cihaz ekranında **"Face ID ile Giriş Yap"** tuşuna basın. Donanım okumadan kapı açılacaktır.
+> After launching the script, tap **"Log In with Face ID"** on the device screen. The lock will open without any hardware scan.
 
 ---
 
-### 📦 Bölüm 2 — Kamera Bypass `02_camera/`
+### 📦 Section 2 — Camera Bypass `02_camera/`
 
-**Amaç:** Liveness kamerasına sahte statik bir resim (`hacker.jpg`) yerleştirmek.
+**Goal:** Force a static fake image (`hacker.jpg`) into the liveness camera feed.
 
 ```bash
-# Önce test yüzünü yerleştir
-cp /path/to/yuz.jpg .local/test-faces/hacker.jpg
+# Place your test face image first
+cp /path/to/face.jpg .local/test-faces/hacker.jpg
 
-# Hook'u enjekte et
+# Inject the hook
 frida -U -n DummyBank -l src/hooks/02_camera/camera_bypass.js
 ```
 
-**Beklenen Terminal Çıktısı:**
+**Expected Terminal Output:**
 ```
-[🌟] SENTINEL HOOK: Kamera Bypass Aktif Ediliyor...
-[💥] SENTINEL YAKALADI: Sensörden Veri Akışı Geldi!
-[Aksiyon]: SAHTE YÜZ ENJEKTİ EDİLDİ -> Liveness Kontrolüne Yollandı!
+[🌟] SENTINEL HOOK: Camera Bypass Active...
+[💥] SENTINEL INTERCEPTED: Sensor frame received!
+[Action]: FAKE FACE INJECTED → Sent to Liveness Engine!
 ```
 
 ---
 
-### 📦 Bölüm 3 — AI / ML Bypass `03_ml_vision/`
+### 📦 Section 3 — AI / ML Bypass `03_ml_vision/`
 
-**Amaç:** Karanlık / boş bir karede bile **"Canlı İnsan Yüzü"** onayı verdirmek.
+**Goal:** Receive a **"Live Human Face Confirmed"** approval even on a completely dark / empty frame.
 
 ```bash
 frida -U -n DummyBank -l src/hooks/03_ml_vision/vision_bypass.js
 ```
 
-**Beklenen Terminal Çıktısı:**
+**Expected Terminal Output:**
 ```
-[+] HEDEF AI MOTORU BULUNDU: VNDetectFaceRectanglesRequest
-[💥] SENTINEL: AI Kandırıldı! 'Canlı Yüz' Onayı Verildi!
+[+] TARGET AI ENGINE FOUND: VNDetectFaceRectanglesRequest
+[💥] SENTINEL: AI deceived! 'Live Face' approval granted!
 ```
 
 > [!NOTE]
-> Telefonu yüzüstü kapatın (tamamen karanlık kamera) ve butona basın. Yine de onay verecektir.
+> Place your phone face-down (completely dark camera) and tap the button. It will still approve.
 
 ---
 
-### 📦 Bölüm 4 — Anti-Tamper Bypass `04_anti_tamper/`
+### 📦 Section 4 — Anti-Tamper Bypass `04_anti_tamper/`
 
-**Amaç:** Uygulamanın **"Cihaz Jailbreak'li!"** diyerek kendini kapatmasını engellemek.
+**Goal:** Prevent the app from crashing with **"Device is Jailbroken!"** and bypassing detection entirely.
 
 ```bash
-# -f: Uygulamayı Frida başlatsın (ilk satırdan hook alsın)
+# Use -f to let Frida spawn the app (hooks from first instruction)
 frida -U -f com.dummy.bank -l src/hooks/04_anti_tamper/root_jailbreak_bypass.js
 ```
 
-**Beklenen Terminal Çıktısı:**
+**Expected Terminal Output:**
 ```
-[🌟] SENTINEL HOOK: Root & Jailbreak Bypass Aktif Ediliyor...
-[+] Objective-C 'NSFileManager.fileExistsAtPath' kancalandı.
-[💥] SENTINEL GİZLENİYOR: Uygulama yasaklı dosya aradı (/Applications/Cydia.app)
+[🌟] SENTINEL HOOK: Root & Jailbreak Bypass Active...
+[+] Objective-C 'NSFileManager.fileExistsAtPath' hooked.
+[💥] SENTINEL HIDING: App searched for blacklisted path (/Applications/Cydia.app)
 ```
 
 ---
 
-## 🔗 ALL-IN-ONE: Tüm Silahları Birden Ateşlemek
+## 🔗 ALL-IN-ONE: Firing the Full Bypass Stack
 
-Gerçek test senaryolarında tüm modüller aynı anda çalışmalıdır:
+In a real test scenario, the target app checks jailbreak status, opens the camera, AND runs AI analysis simultaneously. Run everything at once:
 
 ```bash
 frida -U -n DummyBank \
@@ -134,4 +134,4 @@ frida -U -n DummyBank \
 ```
 
 > [!IMPORTANT]
-> `04_anti_tamper` modülleri **her zaman ilk sıraya** alınmalıdır. Görünmezlik duvarı devreye girmeden diğer hook'lar tespit edilebilir.
+> Always place `04_anti_tamper` modules **first** in the chain. The stealth layer must activate before other hooks can be detected.

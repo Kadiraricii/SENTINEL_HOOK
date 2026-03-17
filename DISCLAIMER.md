@@ -1,17 +1,21 @@
-# ⚖️ Yasal Sorumluluk Reddi (Disclaimer)
+# ⚖️ Legal Disclaimer
 
-**Sentinel Hook** projesi ve bu depo içerisinde yer alan tüm kaynak kodlar (`.js`, `.py`, `.md` ve `.swift` vb. scriptler) **SADECE VE SADECE EĞİTİM VE SİBER GÜVENLİK ARAŞTIRMALARI (Red Teaming, Penetration Testing, Zafiyet Analizi)** amacıyla üretilmiştir.
+**Sentinel Hook** and all source code contained in this repository (`.js`, `.py`, `.md`, `.swift` files) are produced **SOLELY FOR EDUCATIONAL AND SECURITY RESEARCH PURPOSES** (Red Teaming, Penetration Testing, Vulnerability Analysis).
 
-### 🔴 Kesin Yasal Sınırlar
-1. **İzinsiz Kullanım Yasağı:** Bu depo içerisindeki kodlar, yasal sahibi olmadığınız, yazılı ve resmi izin almadığınız hiçbir mobil uygulama (özellikle Bankacılık, Kripto Para, Kamu ve Özel Sektör uygulamaları) üzerinde kullanılamaz.
-2. **Kişisel veya Maddi Zarar:** Bu aracın finansal sistemleri atlatmak, başkasının kimliğine bürünmek (Spoofing) veya güvenlik duvarlarını yasa dışı amaçlarla (Fraud) aşmak için kullanılması **kesinlikle yasaktır.** 
-3. **Münhasır Sorumluluk:** Sentinel Hook betiklerini kullanan herhangi bir birey veya kurum, yaptığı tüm eylemlerden ve bu eylemlerin doğurabileceği bölgesel/uluslararası hukuki yaptırımlardan tek başına sorumludur. **Projenin yazarları ve katkıda bulunanlar, aracın üçüncü şahıslar tarafından kötüye kullanılmasından ötürü hiçbir yasal, maddi veya manevi sorumluluk kabul etmez.**
+### 🔴 Legal Boundaries
 
-### 🟢 Etik Kullanım (White-Hat) Kılavuzu
-Bu projenin asıl varoluş amacı:
-- Kurumların kendi uygulamalarındaki (In-House) Biyometrik Onay (LocalAuthentication/BiometricPrompt) mekanizmalarındaki "Mantıksal Güvenlik (Logic Security)" açıklarını tespit edebilmesi,
-- Kamera Sensörü (Liveness) zafiyetlerini kavrayıp daha iyi bir Anti-Tamper ve donanım doğrulama SDK'sı inşa edebilmesidir.
+1. **Unauthorized Use Prohibition:** The code in this repository may not be used against any mobile application (especially Banking, Crypto, Government, or Enterprise apps) without explicit written authorization from the legal owner.
 
-Sistemi incelerken lütfen etik hackerlık (White-Hat Hacking) kurallarına sadık kalın. Güvenliği yıkmak kolaydır; zor olan, bu yıkımı analiz edip daha iyisini inşa etmektir. 
+2. **Financial & Personal Harm:** Using this toolset to bypass financial systems, impersonate individuals (identity spoofing), or circumvent security controls for fraudulent purposes is **strictly prohibited** and constitutes criminal activity under most jurisdictions.
 
-> *Bu kodları çalıştırdığınız an, yukarıdaki şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.*
+3. **Sole Responsibility:** Any individual or entity using Sentinel Hook scripts bears full and exclusive legal responsibility for all actions taken and any consequences thereof under applicable local and international law. **The authors and contributors of this project accept no legal, financial, or moral liability for misuse by third parties.**
+
+### 🟢 Ethical Usage (White-Hat) Guidelines
+
+The intended purpose of this project is to enable:
+- Organizations to identify **Logic Security vulnerabilities** in their own in-house biometric authentication implementations (`LocalAuthentication` / `BiometricPrompt`).
+- Security researchers to understand **Camera Sensor (Liveness Detection)** weaknesses and build better Anti-Tamper SDKs and hardware verification mechanisms.
+
+Please adhere to responsible disclosure and ethical hacking (White-Hat) principles at all times. Breaking security is easy — the hard part is analyzing the breach and building something stronger.
+
+> *By running any code from this repository, you acknowledge that you have read, understood, and agreed to the terms stated above.*

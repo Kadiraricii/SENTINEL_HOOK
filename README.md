@@ -7,11 +7,11 @@
 ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██║██║╚██╗██║██╔══╝  ██║          
 ███████║███████╗██║ ╚████║   ██║   ██║██║ ╚████║███████╗███████╗     
 ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝    
-                    H  O  O  K                                         
+                       H O O K                                         
 ```
 
 <h3>Advanced Dynamic Instrumentation Framework</h3>
-<h4>Biometric · Liveness · AI/ML Security Bypass</h4>
+<h4>Biometric · Liveness · AI/ML Security Research</h4>
 
 ---
 
@@ -25,142 +25,142 @@
 [![Android](https://img.shields.io/badge/Android-11%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
 [![Swift](https://img.shields.io/badge/Swift-5.9-FA7343?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
 
-[![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKadiraricii%2FSentinel_Hook&count_bg=%23FF6B6B&title_bg=%23282C34&icon=github.svg&icon_color=%23E7E7E7&title=Ziyaret&edge_flat=false)](https://github.com/Kadiraricii/Sentinel_Hook)
+[![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKadiraricii%2FSentinel_Hook&count_bg=%23FF6B6B&title_bg=%23282C34&icon=github.svg&icon_color=%23E7E7E7&title=Visitors&edge_flat=false)](https://github.com/Kadiraricii/Sentinel_Hook)
 
 </div>
 
 ---
 
-## 🎯 Proje Nedir?
+## 🎯 What is Sentinel Hook?
 
-**Sentinel Hook**, iOS ve Android ekosistemlerindeki yüksek güvenlikli uygulamaların (Bankacılık, Kripto Cüzdanlar, Kurumsal Girişler) güvenlik katmanlarını araştıran gelişmiş bir **Dinamik Enstrümantasyon Çerçevesidir**.
+**Sentinel Hook** is an advanced **Dynamic Instrumentation Framework** built on top of [Frida](https://frida.re) for security research on iOS and Android.
 
-Frida'nın RAM seviyesindeki gücünü kullanarak, bir uygulamanın koruma zırhını **4 ayrı katmanda** aynı anda parçalar:
+It targets the security layers of high-assurance applications (Banking, Crypto Wallets, Enterprise Auth) and dismantles their protection across **4 distinct layers** simultaneously:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      SENTINEL HOOK                              │
 │                                                                 │
-│  [01] BiometricPrompt / LocalAuthentication  →  TRUE Inject    │
-│  [02] AVCaptureSession / CameraX             →  Frame Spoof    │
-│  [03] CoreML / Vision / MLKit                →  AI Blind       │
-│  [04] Jailbreak / SSL / Frida Detection      →  Stealth        │
+│  [01]  BiometricPrompt / LocalAuthentication  →  TRUE inject   │
+│  [02]  AVCaptureSession / CameraX             →  Frame spoof   │
+│  [03]  CoreML / Vision / MLKit                →  AI blind      │
+│  [04]  Jailbreak / SSL / Frida Detection      →  Stealth       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ⚡ Özellik Matrisi
+## ⚡ Feature Matrix
 
-| Modül | Platform | Teknik Yaklaşım | Durum |
-|:------|:---------|:----------------|:-----:|
-| **Biyometrik Bypass** | iOS · Android | `evaluatePolicy` / `BiometricPrompt.AuthCallback` hook | ✅ |
-| **Kamera Frame Enjeksiyonu** | iOS · Android | `CVPixelBuffer` / `Image.Plane` bellekte değiştirme | ✅ |
-| **CoreML / Vision Bypass** | iOS | `VNFaceObservation` sahte obje enjeksiyonu | ✅ |
-| **Google MLKit Bypass** | Android | `FaceDetector` return değeri kancalama | ✅ |
+| Module | Platform | Approach | Status |
+|:-------|:---------|:---------|:------:|
+| **Biometric Logic Bypass** | iOS · Android | `evaluatePolicy` / `BiometricPrompt.AuthCallback` hook | ✅ |
+| **Camera Frame Injection** | iOS · Android | `CVPixelBuffer` / `Image.Plane` in-memory swap | ✅ |
+| **CoreML / Vision Bypass** | iOS | Fake `VNFaceObservation` object injection | ✅ |
+| **Google MLKit Bypass** | Android | `FaceDetector` return value interception | ✅ |
 | **OpenCV DNN Bypass** | iOS · Android | Native `cv::dnn::Net::forward` C++ hook | ✅ |
-| **Root / Jailbreak Gizleme** | iOS · Android | `NSFileManager` + `stat` / `fopen` ENOENT yanıtı | ✅ |
-| **SSL Pinning Bypass** | iOS · Android | `SecTrustEvaluate` + `TrustManagerImpl` yamalama | ✅ |
-| **Frida Varlığı Gizleme** | iOS · Android | `/proc/self/maps` + port tarama anomali bastırma | ✅ |
-| **Integrity Check Bypass** | iOS · Android | `SecStaticCodeCheckValidity` + APK İmza sahteleme | ✅ |
+| **Root / Jailbreak Evasion** | iOS · Android | `NSFileManager` + `stat` / `fopen` → ENOENT response | ✅ |
+| **SSL Pinning Bypass** | iOS · Android | `SecTrustEvaluate` + `TrustManagerImpl` patch | ✅ |
+| **Frida Presence Hiding** | iOS · Android | `/proc/self/maps` + port scan anomaly suppression | ✅ |
+| **Integrity Check Bypass** | iOS · Android | `SecStaticCodeCheckValidity` + APK signature spoof | ✅ |
 
 ---
 
-## 📂 Proje Yapısı
+## 📂 Project Structure
 
 ```
 Sentinel_Hook/
 │
 ├── 📁 src/hooks/
-│   ├── 📁 01_biometrics/       ← FaceID, TouchID, BiometricPrompt kırıcılar
+│   ├── 📁 01_biometrics/       ←  FaceID, TouchID, BiometricPrompt breakers
 │   │   ├── local_auth_bypass.js
 │   │   ├── biometric_callback_hook.js
 │   │   └── crypto_object_bypass.js
 │   │
-│   ├── 📁 02_camera/           ← Kamera sensörü manipülasyonları
+│   ├── 📁 02_camera/           ←  Camera sensor manipulation
 │   │   ├── camera_bypass.js
 │   │   ├── camerax_hook.js
 │   │   └── video_replayer.js
 │   │
-│   ├── 📁 03_ml_vision/        ← Yapay Zeka / ML kandırma
+│   ├── 📁 03_ml_vision/        ←  AI / ML blindspot injection
 │   │   ├── vision_bypass.js
 │   │   ├── mlkit_face_bypass.js
 │   │   └── face_embedding_bypass.js
 │   │
-│   └── 📁 04_anti_tamper/      ← Görünmezlik duvarı
+│   └── 📁 04_anti_tamper/      ←  Stealth layer
 │       ├── root_jailbreak_bypass.js
 │       ├── ssl_pinning_bypass.js
 │       ├── frida_detection_bypass.js
 │       └── integrity_bypass.js
 │
-├── 📁 tests/DummyBank/         ← SwiftUI test laboratuvarı
-├── 📁 src/recon/               ← Bellek analiz scriptleri
+├── 📁 tests/DummyBank/          ←  SwiftUI test lab application
+├── 📁 src/recon/                ←  Memory mapping & static analysis scripts
 ├── 📄 README.md
-├── 📄 USAGE.md                 ← Detaylı kullanım rehberi
+├── 📄 USAGE.md                  ←  Detailed usage guide
 ├── 📄 ROADMAP.md
 ├── 📄 CONTRIBUTING.md
 ├── 📄 CHANGELOG.md
 ├── 📄 SECURITY.md
 ├── 📄 DISCLAIMER.md
 ├── 📄 requirements.txt
-└── ⚙️  install.sh              ← Otomatik kurulum
+└── ⚙️  install.sh               ←  One-command setup
 ```
 
 ---
 
-## 🚀 Hızlı Başlangıç
+## 🚀 Quick Start
 
-### 1. Kurulum (Tek Komut)
+### 1. Install (One Command)
 ```bash
 git clone https://github.com/Kadiraricii/Sentinel_Hook.git
 cd Sentinel_Hook
 bash install.sh
 ```
 
-### 2. Cihazı Tanı
+### 2. Identify Your Target
 ```bash
 source .venv/bin/activate
-frida-ps -Uai        # Bağlı cihaz uygulamalarını listele
+frida-ps -Uai        # List all apps on connected device
 ```
 
-### 3. Bypass Ateşle
+### 3. Fire a Bypass
 ```bash
-# Tek modül
+# Single module
 frida -U -n DummyBank -l src/hooks/01_biometrics/local_auth_bypass.js
 
-# Çoklu modül (ALL-IN-ONE)
+# All-in-one (full bypass stack)
 frida -U -n DummyBank \
     -l src/hooks/04_anti_tamper/root_jailbreak_bypass.js \
     -l src/hooks/02_camera/camera_bypass.js \
     -l src/hooks/03_ml_vision/vision_bypass.js
 ```
 
-> 📖 Detaylı test senaryoları için **[USAGE.md](./USAGE.md)** dosyasına bakın.
+> 📖 For detailed test scenarios see **[USAGE.md](./USAGE.md)**
 
 ---
 
-## 🗺️ Yol Haritası
+## 🗺️ Roadmap
 
-| Faz | Kapsam | Durum |
-|:----|:-------|:-----:|
-| Phase 2 | Biometric Logic Bypass | 🟢 Tamamlandı |
-| Phase 3 | Camera & Sensor Spoofing | 🟢 Tamamlandı |
-| Phase 4 | AI / ML Liveness Bypass | 🟢 Tamamlandı |
-| Phase 5 | Anti-Tamper & Stealth | 🟢 Tamamlandı |
-| Phase 6 | CLI Otomasyon & Dashboard | 🟡 Devam Ediyor |
-| Phase 7 | Kernel-Level Evasion (ARM64e) | ⚪️ Planlandı |
+| Phase | Scope | Status |
+|:------|:------|:------:|
+| Phase 2 | Biometric Logic Bypass | 🟢 Complete |
+| Phase 3 | Camera & Sensor Spoofing | 🟢 Complete |
+| Phase 4 | AI / ML Liveness Bypass | 🟢 Complete |
+| Phase 5 | Anti-Tamper & Stealth | 🟢 Complete |
+| Phase 6 | CLI Automation & Dashboard | 🟡 In Progress |
+| Phase 7 | Kernel-Level Evasion (ARM64e) | ⚪️ Planned |
 
 ---
 
-## ⚖️ Yasal Uyarı
+## ⚖️ Legal Notice
 
-> Bu proje yalnızca **eğitim ve siber güvenlik araştırmaları** (Red Teaming, Penetration Testing) amacıyla geliştirilmiştir. İzin verilmemiş sistemlerde kullanılması yasaktır. Detaylar için **[DISCLAIMER.md](./DISCLAIMER.md)** okuyun.
+> This project is intended **solely for educational and security research** purposes (Red Teaming, Penetration Testing). Using it against unauthorized systems is illegal. See **[DISCLAIMER.md](./DISCLAIMER.md)** for full terms.
 
 ---
 
 <div align="center">
 
-**Sentinel Hook** ile güvenliği anlayın, daha iyisini inşa edin.
+**Understand security. Build something better.**
 
 [![GitHub](https://img.shields.io/badge/github-Kadiraricii-181717?style=for-the-badge&logo=github)](https://github.com/Kadiraricii)
 
