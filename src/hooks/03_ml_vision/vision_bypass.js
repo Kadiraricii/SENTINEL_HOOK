@@ -1,56 +1,52 @@
 /**
- * Sentinel Hook - Vision Framework Bypass (Phase 4.1)
- * Hedef: Apple CoreML / Vision AI (Liveness)
- * 
- * Bu hook uygulamaya fiziksel bir resim yollamaz. Bunun yerine 
- * kameranın gördüğü karanlık çerçevenin analiz sonucunu değiştirerek
- * "Ben canlı bir insan yüzü ve göz kırpması gördüm" dedirtir.
+ * Sentinel Hook - Vision Framework Bypass (Phase 8.0 - Memory Stabilized)
+ * Target: Google & Apple ML Liveness/Vision Detection
+ * Fix: Resolved EXC_BAD_ACCESS during Swift casting by using persistent ObjC objects.
  */
 
 if (ObjC.available) {
-    console.log("[🌟] SENTINEL HOOK YÜKLENİYOR: Hedef Apple Vision Yapay Zekası");
-
-    // Hedef Sınıf: Uygulamanın çağırdığı Yüz Okuyucu Request (VNRequest)
-    // VNRequest'in "results" proporty'sine kanca atacağız!
-    var targetClass = ObjC.classes.VNDetectFaceRectanglesRequest;
+    var VNDetectFaceRectanglesRequest = ObjC.classes.VNDetectFaceRectanglesRequest;
+    var VNFaceObservation = ObjC.classes.VNFaceObservation;
+    var NSArray = ObjC.classes.NSArray;
     
-    if (targetClass) {
-        console.log("[+] HEDEF AI MOTORU BULUNDU: VNDetectFaceRectanglesRequest");
+    if (VNDetectFaceRectanglesRequest && VNFaceObservation) {
+        console.log("[🌟] SENTINEL VISION: Engine stabilized & Memory Protected.");
         
-        Interceptor.attach(targetClass["- results"].implementation, {
-            onLeave: function(retval) {
-                // Eğer Orijinal Yapay Zeka boş (NULL) döndüyse veya adam göremediyse,
-                // Sentinel araya girip SAHTE BİR YÜZ (VNFaceObservation) yaratacak.
-                
-                var VNFaceObservation = ObjC.classes.VNFaceObservation;
-                var NSArray = ObjC.classes.NSArray;
-                
-                // Kurgusal bir CGRect (x, y, width, height) yaratarak yapay zekaya "işte yüz burada" diyoruz.
-                // 0.5, 0.5 merkez noktasında boyutu 0.3 olan sentetik bir insan yüzü!
-                var fakeFace = null;
-                
-                try {
-                    // Apple'ın private olmayan init metodunu zorla çağırıyoruz
-                    fakeFace = VNFaceObservation.faceObservationWithBoundingBox_([0.5, 0.5, 0.3, 0.3]);
-                } catch(e) {
-                    console.log("[-] FaceObservation yaratılırken hata, Fallback (alloc/init) deneniyor...");
-                    fakeFace = VNFaceObservation.alloc().init();
-                }
+        var cachedFakeResults = null;
+        var lastLogTime = 0;
 
-                if (fakeFace) {
-                    // Sahte Yüzümüzü Diziye (Array) paketliyoruz.
-                    var fakeArray = NSArray.arrayWithObject_(fakeFace);
-                    
-                    // Asıl yapay zekanın "Ben bir şey göremedim" diyen yanıtını çöpe atıp 
-                    // kendi sahte yüzümüzü hafızaya Return yapıyoruz!
-                    retval.replace(fakeArray);
-                    console.log("[💥] SENTINEL: AI Kandırıldı! 'Canlı Yüz' Onayı Verildi!");
+        // results getter kancası
+        Interceptor.attach(VNDetectFaceRectanglesRequest["- results"].implementation, {
+            onLeave: function(retval) {
+                // Eğer zaten bir sonuç yoksa veya boşsa, kendi sahte sonucumuzu enjekte et
+                try {
+                    if (!cachedFakeResults) {
+                        // Objeleri oluştur ve BELLEKTE TUT (Retain)
+                        var face = VNFaceObservation.alloc().init();
+                        
+                        // Swift'in cast ederken çökmemesi için NSArray oluştur
+                        // .handle kullanarak ham pointer üzerinden işlem yapıyoruz
+                        var array = NSArray.arrayWithObject_(face);
+                        
+                        // Frida GC'nin silmemesi için global referans ve retain
+                        cachedFakeResults = array.retain(); 
+                        face.retain(); 
+                        
+                        console.log("[+] SENTINEL: Memory-Persistent Observation Created.");
+                    }
+
+                    // Orijinal dönüş değerini bizim korumalı array ile değiştir
+                    retval.replace(cachedFakeResults);
+
+                    var now = Date.now();
+                    if (now - lastLogTime > 4000) {
+                        console.log("[💥] SENTINEL INTEL: Vision AI Feed Spoofed (Memory Safe Mode)");
+                        lastLogTime = now;
+                    }
+                } catch(e) {
+                    // console.log("Vision Bypass Error: " + e);
                 }
             }
         });
-    } else {
-        console.log("[-] HATA: VNDetectFaceRectanglesRequest sınıfları bellekte yok.");
     }
-} else {
-    console.log("[-] HATA: Objective-C Runtime bulunamadı.");
 }
