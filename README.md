@@ -50,7 +50,23 @@ It targets the security layers of high-assurance applications (Banking, Crypto W
 
 ---
 
-## ⚡ Feature Matrix
+## 🛰️ Architecture: The Sentinel Command Center
+
+Sentinel isn't just a collection of scripts; it's a **High-Performance Instrumentation Suite** powered by a hybrid architecture:
+
+### 🦀 Rust Internal Engine (Backend - Port 8000)
+The heart of Sentinel is built with **Rust (Axum Framework)** for military-grade stability and speed.
+- **Persistent Session Management:** Unlike standard Frida CLI, the Rust backend manages process PIDs in a thread-safe `HashMap`, ensuring hooks remain active even if the terminal is closed.
+- **Real-Time Telemetry (WebSockets):** Uses asynchronous streams to pipe `stdout` and `stderr` from the injection layer directly to the dashboard with zero latency.
+- **Heartbeat Anchor:** Implements a localized `stdin` heartbeat loop to prevent Frida sessions from idling or auto-terminating (Exit 0).
+
+### ⚛️ Tactical Dashboard (Frontend - Port 5173)
+A modern **React + Vite** interface designed for rapid field deployment.
+- **One-Click Deployment:** Visual toggle for all tactical modules (Biometrics, Vision, etc.).
+- **Live Signal Feed:** A real-time log viewer synchronized with the backend via WS signals.
+- **Diagnostic Mode:** Instantly highlights injection failures or "Process Not Found" errors in neon-red telemetry.
+
+---
 
 | Module | Platform | Approach | Status |
 |:-------|:---------|:---------|:------:|
@@ -135,7 +151,30 @@ frida -U -n DummyBank \
     -l src/hooks/03_ml_vision/vision_bypass.js
 ```
 
-> 📖 For detailed test scenarios see **[USAGE.md](./USAGE.md)**
+### 3. Launch the Tactical Suite
+Sentinel requires both the backend engine and the visual dashboard to be active:
+
+**Terminal 1: The Engine (Rust)**
+```bash
+cd sentinel-rust
+cargo run
+# Operational on http://127.0.0.1:8000
+```
+
+**Terminal 2: The Command Center (Vite)**
+```bash
+cd web_ui
+npm run dev
+# Accessible on http://localhost:5173
+```
+
+---
+
+## 🕹️ Operational Procedure
+1. **SYNC:** Open the dashboard and establish a handshake with the Rust backend.
+2. **TARGET:** Select your target device (Simulator/USB) and ensure the app (e.g., `DummyBank`) is open.
+3. **ENGAGE:** Click any module button. The Rust backend will bundle the JS, spawn Frida, and pipe real-time logs to your feed.
+4. **DETACH:** Clicking the button again sends a `SIGKILL` through the Rust engine to instantly wipe hooks from memory.
 
 ---
 
