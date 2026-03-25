@@ -26,7 +26,7 @@
 [![Swift](https://img.shields.io/badge/Swift-5.9-FA7343?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
 
 [![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKadiraricii%2FSentinel_Hook&count_bg=%23FF6B6B&title_bg=%23282C34&icon=github.svg&icon_color=%23E7E7E7&title=Visitors&edge_flat=false)](https://github.com/Kadiraricii/Sentinel_Hook)
-
+![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=Kadiraricii.SENTINEL_HOOK)
 </div>
 
 ---
