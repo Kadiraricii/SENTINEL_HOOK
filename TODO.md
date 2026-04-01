@@ -468,26 +468,28 @@
 
 > **Amaç:** iOS birincil platform olarak tüm bypass tekniklerini iOS üzerinde geliştir. ⚡ **İLK HEDEF**
 
-- [ ] **8.1** iOS Ortam Hazırlığı
-  - [ ] Jailbroken iOS cihaz veya Corellium/Palera1n setup
-  - [ ] frida-server iOS kurulumu
-  - [ ] Xcode + iOS SDK
-  - [ ] `class-dump` / `dsdump` kurulumu
-- [x] **8.2** LocalAuthentication Framework Bypass
-  - [x] `LAContext.evaluatePolicy()` hook
+- [x] **8.1** iOS Ortam Hazırlığı ✅
+  - [x] Simulator / Jailbroken iOS (iPhone 15 Pro Spoof)
+  - [x] frida-server / sentinel_loader setup
+  - [x] Xcode + iOS SDK
+  - [x] Framework Analysis (AVFoundation/Security)
+- [x] **8.2** LocalAuthentication Framework Bypass ✅
+  - [x] `evaluatePolicy:` hook (Sync/Async)
+  - [x] `src/hooks/ios/keychain_hook.js` (Hardened)
   - [x] Completion handler'a `(true, nil)` enjekte et
-  - [x] `canEvaluatePolicy()` → `true` döndür
-  - [x] `src/hooks/ios/local_auth_bypass.js` oluştur
-- [ ] **8.3** iOS Kamera Bypass
-  - [ ] `AVCaptureSession` / `AVCaptureVideoDataOutput` hook
-  - [ ] `CMSampleBuffer` manipülasyonu
-  - [ ] Sahte frame enjeksiyonu (CVPixelBuffer)
-  - [ ] `src/hooks/ios/camera_bypass.js` oluştur
-- [ ] **8.4** Face ID / Touch ID Spesifik
-  - [ ] Secure Enclave etkileşimini analiz et
-  - [ ] `kSecAccessControlBiometryAny` bayrak manipülasyonu
-  - [ ] Keychain ACL bypass
-  - [ ] `src/hooks/ios/biometric_id_bypass.js` oluştur
+- [x] **8.3** iOS Kamera Bypass (UNIVERSAL) ✅
+  - [x] `AVCaptureVideoDataOutput` delegate hijack
+  - [x] `CVPixelBuffer` manipülasyonu
+  - [x] Sahte frame enjeksiyonu (v8.1)
+  - [x] `src/hooks/ios/camera_hook.js` (Universal Hijacker)
+- [x] **8.4** Face ID / Touch ID / Secure Enclave ✅
+  - [x] Keychain ACL (kSecAccessControl) strip
+  - [x] `biometryType` spoofing (FaceID = 2)
+  - [x] `src/hooks/ios/keychain_hook.js` (Universal ACL Strip)
+- [x] **8.5** OS Cloaking & Stealth (v8.1 Hardened) ✅
+  - [x] P_TRACED debugger mask & stat64 bypass
+  - [x] `src/hooks/ios/cloak_hook.js` (Stealth Shield)
+  - [x] dyld image masking & NSFileManager evasion
 
 ---
 
