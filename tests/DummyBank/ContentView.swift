@@ -4,13 +4,15 @@ import Combine
 struct ContentView: View {
     @StateObject private var authManager = BiometricAuthManager()
     @StateObject private var cameraManager = CameraManager()
+    @StateObject private var mfaManager = MFAAuthManager()
     @State private var showingCamera = false
+    @State private var otpInput = ""
     
     var body: some View {
         ZStack {
             Color(red: 0.05, green: 0.05, blue: 0.08).ignoresSafeArea()
             
-            if authManager.isAuthenticated || cameraManager.isCameraAuthenticated {
+            if authManager.isAuthenticated || cameraManager.isCameraAuthenticated || mfaManager.isFullyAuthenticated {
                 // BYPASS BAŞARILI EKRANI (HACKED)
                 VStack(spacing: 20) {
                     Image(systemName: "lock.open.fill")
@@ -36,6 +38,7 @@ struct ContentView: View {
                     Button("PULL THE PLUG (Reset)") {
                         authManager.isAuthenticated = false
                         cameraManager.isCameraAuthenticated = false
+                        mfaManager.reset()
                         showingCamera = false
                         authManager.errorMessage = nil
                         cameraManager.errorMessage = nil
@@ -44,6 +47,50 @@ struct ContentView: View {
                     .padding()
                     .background(Color.red.opacity(0.2))
                     .cornerRadius(8)
+                }
+            } else if mfaManager.awaitingOTP {
+                // OTP GİRİŞ EKRANI (AŞAMA 2)
+                VStack(spacing: 20) {
+                    Image(systemName: "message.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.orange)
+                    
+                    Text("OTP Doğrulama")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    Text("Lütfen SMS ile gelen 6 haneli kodu giriniz.")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    TextField("000000", text: $otpInput)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .background(Color.white.opacity(0.1))
+                        .cornerRadius(10)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .font(.custom("Courier", size: 24))
+                        .frame(width: 200)
+                    
+                    if let err = mfaManager.errorMessage {
+                        Text(err).foregroundColor(.red).font(.caption)
+                    }
+                    
+                    Button("Doğrula (C-Level)") {
+                        _ = mfaManager.verifyOTP(code: otpInput)
+                    }
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    
+                    Button("İptal") {
+                        mfaManager.reset()
+                        otpInput = ""
+                    }
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
                 }
             } else if showingCamera {
                 // KAMERA LIVENESS (CANLILIK) EKRANI
@@ -106,7 +153,7 @@ struct ContentView: View {
                 }
                 
             } else {
-                // ANA GİRİŞ EKRANI - 5 TARGET PANELİ
+                // ANA GİRİŞ EKRANI - TARGET PANELİ
                 ScrollView {
                     VStack(spacing: 25) {
                         Image(systemName: "shield.lefthalf.filled")
@@ -118,7 +165,8 @@ struct ContentView: View {
                             .font(.headline)
                             .foregroundColor(.white)
                         
-                        if let error = authManager.errorMessage {
+                        // Hata mesajlarını topla
+                        if let error = authManager.errorMessage ?? mfaManager.errorMessage {
                             Text(error)
                                 .foregroundColor(.red)
                                 .font(.custom("Courier", size: 14))
@@ -172,7 +220,7 @@ struct ContentView: View {
                             Text("TARGET: CoreML/Vision (AI Verification)")
                                 .font(.caption).foregroundColor(.gray).padding(.top, 10)
                             
-                            // TARGET 3: Vision Overide (Simülatörde Camera içinde test edilir, ancak ayrı bir buton mantığı koyabiliriz)
+                            // TARGET 3: Vision Overide
                             Button(action: {
                                 showingCamera = true
                             }) {
@@ -189,11 +237,31 @@ struct ContentView: View {
                                 .border(Color.pink.opacity(0.3), width: 1)
                             }
                             
+                            Text("TARGET: Multi-Factor Authentication (Phase 10.2)")
+                                .font(.caption).foregroundColor(.gray).padding(.top, 10)
+                                
+                            // TARGET E: MFA CHAIN
+                            Button(action: {
+                                mfaManager.initiateMFAChain()
+                            }) {
+                                HStack {
+                                    Image(systemName: "link.circle.fill")
+                                    Text("Test Target E: MFA Vault (Biometric+OTP)")
+                                        .fontWeight(.medium)
+                                        .font(.system(size: 14))
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .border(Color.purple.opacity(0.4), width: 1)
+                            }
                             
                             Text("ENVIRONMENT SHIELD")
                                 .font(.caption).foregroundColor(.gray).padding(.top, 10)
                             
-                            // TARGET 4: Jailbreak Detection (Auth ile birleşiktir, tetiklemek için Auth'a basılır)
+                            // TARGET 4: Jailbreak Detection
                             Button(action: {
                                 authManager.authenticateUser()
                             }) {

@@ -14,11 +14,15 @@ MODULES = {
     "camera": ["src/hooks/02_camera"],
     "vision": ["src/hooks/03_ml_vision"],
     "security": ["src/hooks/04_anti_tamper"],
+    "mfachain": ["src/hooks/05_mfa"],
+    "deepfake": ["src/hooks/advanced"],
     "all": [
         "src/hooks/01_biometrics",
         "src/hooks/02_camera",
         "src/hooks/03_ml_vision",
-        "src/hooks/04_anti_tamper"
+        "src/hooks/04_anti_tamper",
+        "src/hooks/05_mfa",
+        "src/hooks/advanced"
     ]
 }
 

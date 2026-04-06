@@ -144,6 +144,7 @@ export default function App() {
     { id: 'vision', name: 'AI VISION SPOOF', icon: <Eye size={24} />, color: '#cf6679', intel: 'Manipulates VNDetectFaceRectanglesRequest output to defeat AI liveness detection. Spoofing: VNFaceObservation.' },
     { id: 'security', name: 'DETECTION SHIELD', icon: <Zap size={24} />, color: '#ffd700', intel: 'Masks jailbreak artifacts and prevents Frida-related environment detection. Masking: Sysctl/ProcFS.' },
     { id: 'deepfake', name: 'DEEPFAKE PIPELINE', icon: <Crosshair size={24} />, color: '#ff5555', intel: 'Real-time OpenCV dynamic face overlay piped directly into CVPixelBuffer. Targets ML Liveness Checks.' },
+    { id: 'mfachain', name: 'MFA CHAIN BYPASS', icon: <Activity size={24} />, color: '#ff2299', intel: 'Phase 10.2: Simulataneously defeats Biometric (LAContext) and intercepts subsequent OTP/SMS Vaults.' },
   ];
 
   return (
