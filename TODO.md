@@ -497,25 +497,25 @@
 
 > **Amaç:** Projeyi sürdürülebilir, öğretilebilir ve genişletilebilir kıl.
 
-- [ ] **9.1** Teknik Dokümantasyon
-  - [ ] `docs/ARCHITECTURE.md` — Proje mimarisi & modül haritası
-  - [ ] `docs/HOOK_REFERENCE.md` — Her hook modülünün detaylı açıklaması
-  - [ ] `docs/API_SURFACE.md` — Hedeflenen Android/iOS API listesi
-  - [ ] `docs/TROUBLESHOOTING.md` — Bilinen sorunlar & çözümleri
-- [ ] **9.2** Akış Diyagramları
-  - [ ] Biyometrik doğrulama akışı (normal vs. bypass)
-  - [ ] Kamera frame pipeline (normal vs. injection)
-  - [ ] Hook yükleme sırası & bağımlılık grafiği
-  - [ ] Mermaid formatında diyagramlar
-- [ ] **9.3** Kullanım Kılavuzu
-  - [ ] Hızlı Başlangıç (`docs/QUICKSTART.md`)
-  - [ ] Adım adım bypass rehberi
-  - [ ] Video walkthrough (isteğe bağlı)
-- [ ] **9.4** Araştırma Notları
-  - [ ] Her bypass tekniğinin teorik açıklaması
-  - [ ] Karşılaşılan korumaların analizi
-  - [ ] Referans makaleler & kaynaklar
-  - [ ] `docs/research/` klasörü
+- [x] **9.1** Teknik Dokümantasyon ✅
+  - [x] `docs/ARCHITECTURE.md` — Proje mimarisi & modül haritası ✅
+  - [x] `docs/HOOK_REFERENCE.md` — Her hook modülünün detaylı açıklaması ✅
+  - [x] `docs/API_SURFACE.md` — Hedeflenen Android/iOS API listesi ✅
+  - [x] `docs/TROUBLESHOOTING.md` — Bilinen sorunlar & çözümleri ✅
+- [x] **9.2** Akış Diyagramları ✅
+  - [x] Biyometrik doğrulama akışı (normal vs. bypass) ✅
+  - [x] Kamera frame pipeline (normal vs. injection) ✅
+  - [x] Hook yükleme sırası & bağımlılık grafiği ✅
+  - [x] Mermaid formatında diyagramlar ✅
+- [x] **9.3** Kullanım Kılavuzu ✅
+  - [x] Hızlı Başlangıç (`docs/QUICKSTART.md`) ✅
+  - [x] Adım adım bypass rehberi ✅
+  - [x] Video walkthrough (isteğe bağlı) ✅
+- [x] **9.4** Araştırma Notları ✅
+  - [x] Her bypass tekniğinin teorik açıklaması ✅
+  - [x] Karşılaşılan korumaların analizi ✅
+  - [x] Referans makaleler & kaynaklar ✅
+  - [x] `docs/research/` klasörü altına ekleme ✅
 
 ---
 

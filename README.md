@@ -68,6 +68,22 @@ A modern **React + Vite** interface designed for rapid field deployment.
 
 ---
 
+## 📚 Tactical Documentation & Research
+
+Sentinel provides a comprehensive technical library for deep-dive security research and rapid deployment.
+
+| Document | Description | Link |
+| :--- | :--- | :---: |
+| **🚀 Quickstart** | Under 5-minute setup and "Fast-Track" bypass guide. | [Read](./docs/QUICKSTART.md) |
+| **🧭 Usage Manual** | In-depth tactical operation and configuration manual. | [Read](./docs/USAGE_GUIDE.md) |
+| **🏗️ Architecture** | High-level system design and module orchestration maps. | [Read](./docs/ARCHITECTURE.md) |
+| **🪝 Hook Reference** | Technical signatures and symbol maps for all instrumentation. | [Read](./docs/HOOK_REFERENCE.md) |
+| **📡 API Surface** | Detailed matrix of targeted iOS & Android security frameworks. | [Read](./docs/API_SURFACE.md) |
+| **🔬 Research Center** | Deep-dive analyses on Forgery, Hijacking, and Stealth. | [Explore](./docs/research/) |
+| **🆘 Troubleshooting** | Common runtime failures and "Safe Boot" solutions. | [Read](./docs/TROUBLESHOOTING.md) |
+
+---
+
 | Module | Platform | Approach | Status |
 |:-------|:---------|:---------|:------:|
 | **Biometric Logic Bypass** | iOS · Android | `evaluatePolicy` / `BiometricPrompt.AuthCallback` hook | ✅ |
@@ -186,8 +202,11 @@ npm run dev
 | Phase 3 | Camera & Sensor Spoofing | 🟢 Complete |
 | Phase 4 | AI / ML Liveness Bypass | 🟢 Complete |
 | Phase 5 | Anti-Tamper & Stealth | 🟢 Complete |
-| Phase 6 | CLI Automation & Dashboard | 🟡 In Progress |
-| Phase 7 | Kernel-Level Evasion (ARM64e) | ⚪️ Planned |
+| Phase 6 | CLI Automation & Dashboard | 🟢 Complete |
+| Phase 7 | Diagnostics & Stability | 🟢 Complete |
+| Phase 8 | iOS Instrumentation Hardening | 🟢 Complete |
+| Phase 9 | Documentation & Knowledge Base | 🟢 Complete |
+| Phase 10| Advanced & Extensions | 🟡 In Progress |
 
 ---
 
