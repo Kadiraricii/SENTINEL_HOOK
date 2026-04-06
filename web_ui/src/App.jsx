@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Terminal, Shield, Play, Square, Crosshair, Fingerprint, Lock, Camera, Eye, Zap, Cpu, Activity, RefreshCw, ChevronRight, Info, Tablet, Smartphone, Laptop } from 'lucide-react';
+import { Terminal, Shield, Play, Square, Crosshair, Fingerprint, Lock, Camera, Eye, Zap, Cpu, Activity, RefreshCw, ChevronRight, Info, Tablet, Smartphone, Laptop, Trash2 } from 'lucide-react';
 import './index.css';
 
 export default function App() {
@@ -197,11 +197,16 @@ export default function App() {
                 <button key={m.id} className={`tactical-card ${activeModules.includes(m.id) ? 'active' : ''} ${!isConnected ? 'disabled' : ''}`} onClick={() => isConnected && handleInject(m.id)} disabled={!isConnected}>
                   <div className="card-accent" style={{ background: m.color }}></div>
                   <div className="card-content">
-                    <div className="card-icon" style={{ color: m.color }}>{m.icon}</div>
-                    <div><div className="card-title">{m.name}</div><div className="intel-report mono"><p>{m.intel}</p></div></div>
+                    <div className="tactical-card-header">
+                        <div className="card-icon" style={{ color: m.color }}>{m.icon}</div>
+                        <div className="card-title">{m.name}</div>
+                        <div className={`cyber-switch ${activeModules.includes(m.id) ? 'on' : 'off'}`}>
+                            <div className="switch-knob"></div>
+                        </div>
+                    </div>
+                    <div className="intel-report mono"><p>{m.intel}</p></div>
                   </div>
-                  {activeModules.includes(m.id) && <div className="card-status"><span className="pulse-dot"></span><span className="status-label mono">ENGAGED</span></div>}
-                  <div className="card-id-stamp mono">SENTINEL_UID::{m.id.toUpperCase()}</div>
+                  <div className="card-id-stamp mono" style={{marginTop: '10px', fontSize: '0.65rem'}}>SENTINEL_UID::{m.id.toUpperCase()}</div>
                 </button>
               ))}
               {!isConnected && <div className="lock-overlay"><Lock size={64} className="lock-icon" /><div className="lock-text mono">ESTABLISH HANDSHAKE TO ENABLE DEPLOYMENT</div></div>}
@@ -209,7 +214,16 @@ export default function App() {
           </div>
 
           <div className="glass-panel console-panel">
-            <div className="panel-header"><h3 className="panel-title"><Terminal size={18} /> Live Tactical Feed</h3><div className="active-sessions-badge mono">SESS: {activeModules.length}</div></div>
+            <div className="panel-header" style={{ justifyContent: 'space-between', display: 'flex', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Terminal size={18} />
+                    <h3 className="panel-title" style={{ margin: 0 }}>Live Tactical Feed</h3>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button className="cyber-btn danger" style={{ padding: '4px 10px', width: 'auto', fontSize: '0.7rem' }} onClick={clearLogs}><Trash2 size={12} /> CLEAR</button>
+                    <div className="active-sessions-badge mono">SESS: {activeModules.length}</div>
+                </div>
+            </div>
             <div className="console-stream">
               {logs.map((log, i) => (
                 <div key={i} className={`log-line-large ${log.includes('[!]') || log.includes('ERROR') ? 'log-error' : ''}`}>

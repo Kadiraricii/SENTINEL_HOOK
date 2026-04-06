@@ -78,7 +78,7 @@ class CameraManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleB
             self.errorMessage = "AWAITING SENSOR INPUT... (Frida Injection Point Active)"
         }
         
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             self?.simulateFrameTrigger()
         }
     }
@@ -110,7 +110,7 @@ class CameraManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleB
         do {
             try sequenceHandler.perform([request], on: dummyCG)
         } catch {
-            print("Vision error: \(error)")
+            // [UI Optimization]: Sessizce yakala, simülatör ML desteklemediği için oluşan konsol spaminı durdur
         }
     }
     
