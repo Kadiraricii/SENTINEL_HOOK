@@ -16,6 +16,7 @@ MODULES = {
     "security": ["src/hooks/04_anti_tamper"],
     "mfachain": ["src/hooks/05_mfa"],
     "deepfake": ["src/hooks/advanced"],
+    "kernelcam": ["src/hooks/advanced"],
     "all": [
         "src/hooks/01_biometrics",
         "src/hooks/02_camera",
