@@ -100,7 +100,7 @@ export default function App() {
             const res = await fetch('http://127.0.0.1:8000/api/inject', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ target, device_id: selectedDevice.id, modules: [] }),
+                body: JSON.stringify({ target, device_id: selectedDevice.id, modules: [module] }),
             });
             setActiveModules((prev) => prev.filter(m => m !== module));
             setLogs((prev) => [...prev, `[SYSTEM] Tactical signal lost for '${module}'.`]);
