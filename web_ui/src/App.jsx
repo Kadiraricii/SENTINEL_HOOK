@@ -130,6 +130,7 @@ export default function App() {
     { id: 'camera', name: 'CAMERA INJECTOR', icon: <Camera size={24} />, color: '#03dac6', intel: 'Overrides AVCaptureSession to inject tactical image assets into live feed. Bypass: AVFoundation.' },
     { id: 'vision', name: 'AI VISION SPOOF', icon: <Eye size={24} />, color: '#cf6679', intel: 'Manipulates VNDetectFaceRectanglesRequest output to defeat AI liveness detection. Spoofing: VNFaceObservation.' },
     { id: 'security', name: 'DETECTION SHIELD', icon: <Zap size={24} />, color: '#ffd700', intel: 'Masks jailbreak artifacts and prevents Frida-related environment detection. Masking: Sysctl/ProcFS.' },
+    { id: 'deepfake', name: 'DEEPFAKE PIPELINE', icon: <Crosshair size={24} />, color: '#ff5555', intel: 'Real-time OpenCV dynamic face overlay piped directly into CVPixelBuffer. Targets ML Liveness Checks.' },
   ];
 
   return (
