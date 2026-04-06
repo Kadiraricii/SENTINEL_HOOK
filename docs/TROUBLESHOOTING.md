@@ -1,41 +1,41 @@
-# 🔧 Sentinel Hook — Sorun Giderme Rehberi
+# 🔧 Sentinel Hook — Troubleshooting Guide
 
-> **Kapsam:** Frida bağlantı sorunları, hook hataları, platform kaynaklı problemler  
-> **Frida Sürümü:** 16.2.x  
-> **Format:** Hata → Kök Neden → Çözüm
+> **Scope:** Frida connection issues, hook errors, platform-specific problems  
+> **Frida Version:** 16.2.x  
+> **Format:** Error → Root Cause → Solution
 
 ---
 
-## Hızlı Tanı Komutu
+## Quick Diagnostic Command
 
 ```bash
-# Ortamın durumunu tek komutla kontrol et
+# Check the environment status with a single command
 source .venv/bin/activate && frida --version && frida-ls-devices
 ```
 
 ---
 
-## Kategori 1: Bağlantı & Oturum Hataları
+## Category 1: Connection & Session Errors
 
 ### ❌ `RPCException: unable to handle message`
 
-**Belirti:** Python tarafında `script.exports.init()` çağrısı sonrası `RPCException` fırlar.
+**Symptom:** After a Python call to `script.exports.init()`, an `RPCException` is thrown.
 
-**Kök Nedenler:**
+**Root Causes:**
 
-1. JS tarafındaki `rpc.exports` objesi henüz yüklenmeden Python çağrı yapmaya çalışıyor.
-2. `sentinel_loader.js` içinde syntax hatası var, script yüklenmedi.
-3. Frida sürümü ile `frida-compile` çıktısı uyumsuz.
+1. Python attempts to make a call before the `rpc.exports` object on the JS side is fully loaded.
+2. Syntax error inside `sentinel_loader.js`, script failed to load.
+3. Frida version is incompatible with the `frida-compile` output.
 
-**Çözüm:**
+**Solution:**
 
 ```python
-# ❌ Yanlış: script yüklenirken hemen çağrı
+# ❌ Incorrect: making a call immediately while loading the script
 script = session.create_script(source)
 script.load()
-result = script.exports.init(config)  # Henüz hazır değil!
+result = script.exports.init(config)  # Not ready yet!
 
-# ✅ Doğru: on_message callback ile hazırlık sinyali bekle
+# ✅ Correct: wait for the ready signal with an on_message callback
 def on_message(message, data):
     if message['type'] == 'send' and message['payload'] == 'ready':
         script.exports.init(config)
@@ -48,80 +48,80 @@ script.load()
 
 ### ❌ `PermissionDenied: unable to attach`
 
-**Belirti:** `frida.attach(pid)` çağrısında izin hatası.
+**Symptom:** Permission error during `frida.attach(pid)`.
 
-**Kök Nedenler:**
+**Root Causes:**
 
-| Durum | Açıklama |
+| Condition | Explanation |
 |:------|:---------|
-| `frida-server` çalışmıyor | Cihazda `frida-server` başlatılmadı |
-| Yanlış mimari | `arm64e` cihazda `arm64` binary kullanılıyor |
-| SIP aktif (Mac host) | macOS System Integrity Protection Frida'yı engelliyor |
-| USB bağlantı yok | `frida-ls-devices` listede cihazı göstermiyor |
+| `frida-server` is not running | `frida-server` was not started on the device |
+| Wrong architecture | `arm64` binary is used on an `arm64e` device |
+| SIP active (Mac host) | macOS System Integrity Protection blocks Frida |
+| No USB connection | `frida-ls-devices` does not list the device |
 
-**Çözüm:**
+**Solution:**
 
 ```bash
-# 1. Cihazda frida-server'ı doğru başlat (jailbroken cihazda)
-ssh root@<cihaz-ip>
+# 1. Start frida-server correctly on the device (requires jailbroken device)
+ssh root@<device-ip>
 /usr/sbin/frida-server &
 
-# 2. Mimariyi doğrula
+# 2. Verify architecture
 frida-ls-devices
-# Çıktıda: iPhone (id: ...) görünmeli
+# Output should display: iPhone (id: ...)
 
-# 3. Test bağlantısı
+# 3. Test connection
 frida -U -n SpringBoard
-# Başarılıysa REPL açılır
+# If successful, a REPL opens
 ```
 
 ---
 
 ### ❌ `Failed to spawn: unable to find process with name`
 
-**Belirti:** `frida.spawn()` veya `frida.attach()` uygulamayı bulamıyor.
+**Symptom:** `frida.spawn()` or `frida.attach()` cannot find the application.
 
-**Çözüm:**
+**Solution:**
 
 ```bash
-# Çalışan process listesini al
-frida-ps -Ua   # USB bağlı cihaz, yüklü uygulamalar
+# Fetch the running process list
+frida-ps -Ua   # USB connected device, installed applications
 
-# Doğru Bundle ID'yi bul
+# Find the correct Bundle ID
 frida-ps -Uai | grep -i "banking"
 
-# Bundle ID ile spawn
+# Spawn via Bundle ID
 frida -U -f com.example.bankapp --no-pause
 ```
 
 ---
 
-## Kategori 2: Hook Çalışma Hataları
+## Category 2: Hook Execution Errors
 
 ### ❌ `TypeError: not a function` (ObjC method hook)
 
-**Belirti:** `ObjC.classes.SomeClass['- methodName']` undefined veya çağrılamaz döner.
+**Symptom:** `ObjC.classes.SomeClass['- methodName']` returns undefined or cannot be called.
 
-**Kök Nedenler:**
+**Root Causes:**
 
-1. Method ismi yanlış — sınıf bu method'u implemente etmiyor.
-2. Method lazy-load ediliyor; class henüz memory'de değil.
-3. Swift obfuscation — method `_$S...` mangled isimle export edilmiş.
+1. The method name is incorrect — the class does not implement this method.
+2. The method is lazy-loaded; the class is not in memory yet.
+3. Swift obfuscation — the method is exported with a mangled name like `_$S...`.
 
-**Çözüm:**
+**Solution:**
 
 ```js
-// 1. Sınıfın gerçekten o methodu içerip içermediğini kontrol et
+// 1. Verify if the class actually contains that method
 const cls = ObjC.classes.LAContext;
-console.log(cls.$ownMethods.join('\n'));  // Tüm methodları listele
+console.log(cls.$ownMethods.join('\n'));  // List all methods
 
-// 2. Lazy class için ObjC.schedule kullan
+// 2. Use ObjC.schedule for a lazy class
 ObjC.schedule(ObjC.mainQueue, function() {
   const target = ObjC.classes.LAContext['- evaluatePolicy:localizedReason:reply:'];
   if (target) Interceptor.attach(target.implementation, { ... });
 });
 
-// 3. Swift mangled isim için export tara
+// 3. Scan exports for the Swift mangled name
 const mod = Process.getModuleByName('TargetApp');
 mod.enumerateExports().filter(e => e.name.includes('evaluatePolicy'));
 ```
@@ -130,19 +130,19 @@ mod.enumerateExports().filter(e => e.name.includes('evaluatePolicy'));
 
 ### ❌ `Error: access violation reading 0x...` (Native hook crash)
 
-**Belirti:** `stat64` veya `access` hook'u uygulamayı çökertiyor.
+**Symptom:** Native hooks like `stat64` or `access` crash the application.
 
-**Kök Neden:** `onEnter` içinde `args[0].readUtf8String()` null pointer okumaya çalışıyor.
+**Root Cause:** Inside `onEnter`, attempting a null pointer read via `args[0].readUtf8String()`.
 
-**Çözüm — Safe Boot wrapper:**
+**Solution — Safe Boot wrapper:**
 
 ```js
-// ❌ Yanlış: doğrudan okuma
+// ❌ Incorrect: direct read
 onEnter(args) {
-  this.path = args[0].readUtf8String();  // NULL ise crash!
+  this.path = args[0].readUtf8String();  // Crash if NULL!
 }
 
-// ✅ Doğru: null guard
+// ✅ Correct: null guard
 onEnter(args) {
   try {
     this.path = args[0].isNull() ? '' : args[0].readUtf8String();
@@ -157,63 +157,63 @@ onEnter(args) {
 
 ### ❌ `Error: Module 'Security' not found`
 
-**Belirti:** `Module.findExportByName('Security', 'SecItemCopyMatching')` null döner.
+**Symptom:** `Module.findExportByName('Security', 'SecItemCopyMatching')` returns null.
 
-**Çözüm:**
+**Solution:**
 
 ```js
-// Framework adı değil, dylib yolunu kullan
+// Use the exact dylib path instead of the Framework name
 const SEC = Module.findExportByName(
   '/System/Library/Frameworks/Security.framework/Security',
   'SecItemCopyMatching'
 );
 
-// Alternatif: tüm module'lerde tara
+// Alternative: scan across all modules
 const sym = Process.findExportByName('SecItemCopyMatching');
 ```
 
 ---
 
-## Kategori 3: Kamera / Frame Enjeksiyon Hataları
+## Category 3: Camera / Frame Injection Errors
 
 ### ❌ `CVReturn error: -6680` (kCVReturnInvalidArgument)
 
-**Belirti:** `CVPixelBufferCreate` hata kodu döndürüyor, sahte buffer oluşturuluyor.
+**Symptom:** `CVPixelBufferCreate` returns an error code when creating a fake buffer.
 
-**Kök Neden:** Pixel format veya boyut hedef uygulamanın beklentisiyle uyumsuz.
+**Root Cause:** The Pixel format or dimensions don't match the target application's expectations.
 
-**Çözüm:**
+**Solution:**
 
 ```js
-// Orijinal buffer'ın format ve boyutunu al, aynısıyla yeni buffer oluştur
+// Retrieve the format and dimensions of the original buffer, use them for the new buffer
 const origBuf = CMSampleBufferGetImageBuffer(realSampleBuffer);
 const width  = CVPixelBufferGetWidth(origBuf);
 const height = CVPixelBufferGetHeight(origBuf);
-const fmt    = CVPixelBufferGetPixelFormatType(origBuf);  // Genelde 875704438 = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+const fmt    = CVPixelBufferGetPixelFormatType(origBuf);  // Usually 875704438 = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
 
-// Aynı parametrelerle sahte buffer oluştur
+// Create fake buffer with matched parameters
 CVPixelBufferCreate(kCFAllocatorDefault, width, height, fmt, null, fakeBufferRef);
 ```
 
 ---
 
-### ❌ Kamera Ekranı Donuyor / Siyah Görünüyor
+### ❌ Camera Screen Freezes / Appears Black
 
-**Belirti:** Frame enjeksiyonu sonrası uygulama kamera preview'unu donuk gösteriyor.
+**Symptom:** After frame injection, the app's camera preview gets stuck or blackened.
 
-**Kök Neden:** `CMSampleBufferRef`'in `presentationTimeStamp` ve `duration` değerleri yanlış.
+**Root Cause:** The `presentationTimeStamp` and `duration` values in `CMSampleBufferRef` are either missing or incorrect.
 
-**Çözüm:**
+**Solution:**
 
 ```js
-// Orijinal timestamp'i sahte buffer'a kopyala
+// Copy the original timestamp over to the fake buffer
 const origTimestamp = CMSampleBufferGetPresentationTimeStamp(realSampleBuffer);
-// Sahte buffer oluşturulurken bu timestamp kullanılmalı
+// Use this timestamp when creating the fake buffer
 CMSampleBufferCreateForImageBuffer(
   allocator, fakePixelBuffer,
   true, null, null,
   formatDescription,
-  origTimestamp,  // ← Gerçek zamanı kullan
+  origTimestamp,  // ← Use real timestamp here
   origTimestamp,
   fakeBufferRef
 );
@@ -221,15 +221,15 @@ CMSampleBufferCreateForImageBuffer(
 
 ---
 
-## Kategori 4: Ortam & Kurulum Sorunları
+## Category 4: Environment & Setup Issues
 
 ### ❌ `frida-compile: command not found`
 
 ```bash
-# npx ile çalıştır
+# Execute via npx
 npx frida-compile src/hooks/ios/cloak.js -o dist/cloak.js
 
-# Yoksa yeniden kur
+# Or reinstall if missing
 npm install --save-dev frida-compile
 ```
 
@@ -238,36 +238,52 @@ npm install --save-dev frida-compile
 ### ❌ `ImportError: No module named 'frida'`
 
 ```bash
-# Sanal ortam aktif mi?
-which python  # .venv/bin/python göstermeli
+# Is the virtual environment active?
+which python  # Should point to .venv/bin/python
 
-# Değilse aktifleştir
+# If not, activate it
 source .venv/bin/activate
 pip install frida==16.2.1 frida-tools==16.2.1
 ```
 
 ---
 
-### ❌ Frida port 27042 zaten kullanımda
+### ❌ Frida port 27042 is already in use
 
 ```bash
-# Eski frida-server process'ini öldür
+# Kill any lingering frida-server processes
 pkill -9 frida-server
-lsof -i :27042  # Kontrol et
+lsof -i :27042  # Verify port release
 ```
 
 ---
 
-## Genel Tanı Araçları
+## General Diagnostic Tools
 
-| Araç | Komut | Ne İşe Yarar |
+| Tool | Command | Purpose |
 |:-----|:------|:-------------|
-| Cihaz listesi | `frida-ls-devices` | Bağlı cihazları gösterir |
-| Process listesi | `frida-ps -Ua` | Uygulamaların PID & Bundle ID'si |
-| Canlı REPL | `frida -U -n AppName` | Anlık JS çalıştırma |
-| Trace mode | `frida-trace -U -n AppName -m "LAContext"` | Method çağrılarını otomatik logla |
-| Objection | `objection -g AppName explore` | Yüksek seviyeli interaktif bypass |
+| Device List | `frida-ls-devices` | Shows all connected devices |
+| Process List | `frida-ps -Ua` | Lists Application PIDs & Bundle IDs |
+| Live REPL | `frida -U -n AppName` | Interactive JS execution shell |
+| Trace Mode | `frida-trace -U -n AppName -m "LAContext"` | Automatically logs method calls |
+| Objection | `objection -g AppName explore` | High-level interactive security bypass suite |
 
 ---
 
-*Bkz: [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`HOOK_REFERENCE.md`](HOOK_REFERENCE.md) · [`QUICKSTART.md`](QUICKSTART.md)*
+*See: [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`HOOK_REFERENCE.md`](HOOK_REFERENCE.md) · [`QUICKSTART.md`](QUICKSTART.md)*
+
+## Known Issues & Simulation Logs
+
+### 1. Sysctl / Open Hook Error (Simulator Environments)
+```
+[-] Sysctl hook could not be installed: not a function
+[-] Open hook could not be installed: not a function
+```
+**Explanation:** This error occurs when the Anti-Tamper/Jailbreak bypass modules (Anti-Detection Shield) are executed in a computer environment (iOS / Android Simulator). The related C++ memory directories (`/proc/sysctl` or `open()` syscalls) belong directly to ARM-architecture mobile device kernels. Because the test is not performed on a physical iPhone or Android device, Sentinel Hook throws these errors. However, it continues to bypass vulnerabilities (Biometric/Deepfake) in the simulator without completely interrupting the process.
+
+### 2. Session Closed (Nuclear Purge)
+```
+[SYSTEM] Module 'deepfake' session closed. (Exit: Ok(ExitStatus(unix_wait_status(9))))
+[SYSTEM] NUCLEAR PURGE: All hooks detached.
+```
+**Explanation:** When the "PURGE SESSIONS" button is clicked after Biometric, Liveness, or Injector operations are finished, the Rust backend service immediately destroys the RAM-based interventions made to the system (using SIGKILL 9). This is not an error; it is the state of Sentinel silently exiting memory (Stealth Mode) following a successful penetration operation.
