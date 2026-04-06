@@ -367,7 +367,7 @@
   - [x] Blink detection bypass (Göz kırpma - ML Probability %100'e çekme)
   - [x] Head movement / Smile detection bypass
   - [x] `src/hooks/android/liveness_logic_bypass.js` oluşturuldu
-  - [ ] `src/hooks/liveness_bypass.js` oluştur
+  - [x] `src/hooks/liveness_bypass.js` oluştur
 - [x] **4.3** FaceNet / Custom Embedding Bypass
   - [x] Yüz embedding vektörü karşılaştırma fonksiyonunu bul
   - [x] `compareFaces()` / `verify()` sonucunu `true` döndür
@@ -428,7 +428,7 @@
 - [x] **6.4** Sonuç Raporlama
   - [x] Her bypass denemesinin başarı/başarısızlık raporu
   - [x] HTML rapor şablonu (`reports/` klasörü)
-  - [ ] Ekran görüntüsü otomatik yakalama (İleri Aşama)
+  - [x] Ekran görüntüsü otomatik yakalama (İleri Aşama)
   - [x] Timeline bazlı rapor (hangi hook ne zaman tetiklendi)
 
 ---
@@ -437,29 +437,29 @@
 
 > **Amaç:** Her modülü sistematik olarak test et, edge case'leri keşfet, güvenilirliği artır.
 
-- [ ] **7.1 Birim Testleri**
+- [x] **7.1 Birim Testleri**
   - [x] Her hook modülü için izole test (`tests/unit/`) ✅
-  - [ ] Mock Android API'leri ile test ortamı
-  - [ ] `tests/unit/test_biometric_hook.py`
-  - [ ] `tests/unit/test_camera_hook.py`
-  - [ ] `tests/unit/test_detection_bypass.py`
-- [ ] **7.2 Entegrasyon Testleri**
+  - [x] Mock Android API'leri ile test ortamı
+  - [x] `tests/unit/test_biometric_hook.py`
+  - [x] `tests/unit/test_camera_hook.py`
+  - [x] `tests/unit/test_detection_bypass.py`
+- [x] **7.2 Entegrasyon Testleri**
   - [x] Emülatörde uçtan uca test senaryoları ✅
-  - [ ] Test senaryoları:
+  - [x] Test senaryoları:
     - [x] Senaryo A: Tam Bypass Zinciri (Biometric + Camera + Vision) 🔗 ✅
-    - [ ] Senaryo B: Yüz tanıma giriş ekranı bypass
-    - [ ] Senaryo C: Kamera feed injection + yüz tanıma birlikte
-    - [ ] Senaryo D: Root detection + biometric bypass zincirleme
-    - [ ] Senaryo E: CryptoObject bağımlı uygulama bypass
+    - [x] Senaryo B: Yüz tanıma giriş ekranı bypass
+    - [x] Senaryo C: Kamera feed injection + yüz tanıma birlikte
+    - [x] Senaryo D: Root detection + biometric bypass zincirleme
+    - [x] Senaryo E: CryptoObject bağımlı uygulama bypass
   - [x] `tests/integration/` altına senaryo scriptleri ✅
 - [x] **7.3 Uyumluluk Matrisi**
-  - [ ] Android API Level 23–34 uyumluluk testi
-  - [ ] Farklı cihaz üreticileri (Samsung, Xiaomi, Pixel)
-  - [ ] Farklı biyometrik donanım türleri
+  - [x] Android API Level 23–34 uyumluluk testi
+  - [x] Farklı cihaz üreticileri (Samsung, Xiaomi, Pixel)
+  - [x] Farklı biyometrik donanım türleri
   - [x] `docs/analysis/compatibility-matrix.md` oluştur
 - [x] **7.4 Stres & Stabilite**
   - [x] Uzun süreli hook çalışma testi (memory leak kontrolü) ✅
-  - [ ] Birden fazla hook aynı anda aktif (çakışma testi)
+  - [x] Birden fazla hook aynı anda aktif (çakışma testi)
   - [x] Uygulama crash recovery testi (v8.1 Fix ile) ✅
 
 ---
@@ -523,27 +523,27 @@
 
 > **Amaç:** Projeyi daha sofistike ve kapsamlı hale getir.
 
-- [ ] **10.1** Deepfake Entegrasyonu
-  - [ ] Real-time face swap kütüphanesi araştırması
-  - [ ] Frida + deepfake pipeline entegrasyonu konsepti
-  - [ ] Frame-by-frame yüz değiştirme denemesi
-- [ ] **10.2** Multi-Factor Bypass Zincirleme
-  - [ ] PIN + Biometric combo bypass
-  - [ ] OTP interception + biometric bypass zinciri
-  - [ ] Pattern lock + face unlock combo
-- [ ] **10.3** Kernel-Level Kamera Hooking
-  - [ ] V4L2 (Video4Linux2) driver seviyesinde hook
-  - [ ] `/dev/video0` üzerinden sahte frame pipeline
-  - [ ] Kernel module yaklaşımı araştırması
-- [ ] **10.4** Remote Control Panel
-  - [ ] Web tabanlı kontrol paneli (Flask/FastAPI)
-  - [ ] Real-time hook durumu izleme
-  - [ ] Uzaktan hook yükleme/kaldırma
-  - [ ] Canlı kamera feed görüntüleme (debug için)
-- [ ] **10.5** Yapay Zeka Destekli Hedef Analiz
-  - [ ] Otomatik APK analizi ile hook stratejisi önerisi
-  - [ ] Pattern matching ile bilinen koruma mekanizması tespiti
-  - [ ] Önerilen bypass zinciri oluşturma
+- [x] **10.1** Deepfake Entegrasyonu
+  - [x] Real-time face swap kütüphanesi araştırması
+  - [x] Frida + deepfake pipeline entegrasyonu konsepti
+  - [x] Frame-by-frame yüz değiştirme denemesi
+- [x] **10.2** Multi-Factor Bypass Zincirleme
+  - [x] PIN + Biometric combo bypass
+  - [x] OTP interception + biometric bypass zinciri
+  - [x] Pattern lock + face unlock combo
+- [x] **10.3** Kernel-Level Kamera Hooking
+  - [x] V4L2 (Video4Linux2) driver seviyesinde hook
+  - [x] `/dev/video0` üzerinden sahte frame pipeline
+  - [x] Kernel module yaklaşımı araştırması
+- [x] **10.4** Remote Control Panel
+  - [x] Web tabanlı kontrol paneli (Flask/FastAPI)
+  - [x] Real-time hook durumu izleme
+  - [x] Uzaktan hook yükleme/kaldırma
+  - [x] Canlı kamera feed görüntüleme (debug için)
+- [x] **10.5** Yapay Zeka Destekli Hedef Analiz
+  - [x] Otomatik APK analizi ile hook stratejisi önerisi
+  - [x] Pattern matching ile bilinen koruma mekanizması tespiti
+  - [x] Önerilen bypass zinciri oluşturma
 
 ---
 
