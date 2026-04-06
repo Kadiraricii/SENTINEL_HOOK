@@ -8,132 +8,213 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color(red: 0.05, green: 0.05, blue: 0.08).ignoresSafeArea()
             
             if authManager.isAuthenticated || cameraManager.isCameraAuthenticated {
-                // BYPASS BAŞARILI EKRANI
+                // BYPASS BAŞARILI EKRANI (HACKED)
                 VStack(spacing: 20) {
                     Image(systemName: "lock.open.fill")
-                        .font(.system(size: 60))
+                        .font(.system(size: 80))
                         .foregroundColor(.green)
+                        .shadow(color: .green, radius: 10, x: 0, y: 0)
                     
-                    Text("Hoş Geldiniz!")
-                        .font(.largeTitle)
+                    Text("SYSTEM COMPROMISED")
+                        .font(.custom("Courier", size: 24))
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.red)
                     
-                    Text("Gizli Kasaya başarıyla giriş yaptınız.")
+                    Text("Welcome, Unauthorized User.")
                         .foregroundColor(.gray)
                     
                     Text("GİZLİ VERİ: HESAP_BAKİYESİ_$1.000.000")
                         .font(.caption)
                         .padding()
-                        .background(Color.green.opacity(0.3))
-                        .cornerRadius(10)
+                        .background(Color.green.opacity(0.1))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green, lineWidth: 1))
                         .foregroundColor(.green)
                     
-                    Button("Çıkış Yap") {
+                    Button("PULL THE PLUG (Reset)") {
                         authManager.isAuthenticated = false
                         cameraManager.isCameraAuthenticated = false
                         showingCamera = false
+                        authManager.errorMessage = nil
+                        cameraManager.errorMessage = nil
                     }
                     .foregroundColor(.white)
                     .padding()
+                    .background(Color.red.opacity(0.2))
+                    .cornerRadius(8)
                 }
             } else if showingCamera {
                 // KAMERA LIVENESS (CANLILIK) EKRANI
                 VStack {
-                    Text("Liveness Yüz Taraması")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
+                    HStack {
+                         Text("Live Sensor Feed")
+                             .font(.custom("Courier", size: 18))
+                             .foregroundColor(.green)
+                         Spacer()
+                         Circle().fill(Color.red).frame(width: 10, height: 10)
+                    }
+                    .padding()
                     
-                    if let frame = cameraManager.currentFrame {
-                        Image(decorative: frame, scale: 1.0, orientation: .up)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 400)
-                            .cornerRadius(20)
-                            .padding()
-                    } else {
+                    ZStack {
+                        if let frame = cameraManager.currentFrame {
+                            Image(decorative: frame, scale: 1.0, orientation: .up)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 350)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green.opacity(0.5), lineWidth: 2))
+                                .padding()
+                        } else {
+                            Rectangle()
+                                .fill(Color.black)
+                                .frame(height: 350)
+                                .border(Color.green.opacity(0.3), width: 2)
+                                .overlay(
+                                     VStack {
+                                         Image(systemName: "viewfinder")
+                                             .font(.system(size: 50))
+                                             .foregroundColor(.green.opacity(0.5))
+                                         Text("AWAITING INJECTION...")
+                                             .font(.custom("Courier", size: 14))
+                                             .foregroundColor(.green.opacity(0.8))
+                                             .padding(.top)
+                                     }
+                                )
+                                .padding()
+                        }
+                        
+                        // Tarama Efekti
                         Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(height: 400)
-                            .cornerRadius(20)
-                            .overlay(Text("Kamera Başlatılıyor... / Simülatör").foregroundColor(.white))
-                            .padding()
+                            .fill(LinearGradient(gradient: Gradient(colors: [.clear, .green.opacity(0.3), .clear]), startPoint: .top, endPoint: .bottom))
+                            .frame(height: 20)
+                            .offset(y: -150) // Animasyon eklenebilir
                     }
                     
                     if let err = cameraManager.errorMessage {
-                        Text(err).foregroundColor(.red).font(.caption).padding()
+                        Text(err).foregroundColor(.orange).font(.custom("Courier", size: 12)).padding().multilineTextAlignment(.center)
                     }
                     
-                    Button("Geri Dön") {
+                    Button("ABORT SENSOR LINK") {
                         showingCamera = false
+                        cameraManager.errorMessage = nil
                     }
+                    .font(.custom("Courier", size: 14))
                     .padding()
                     .foregroundColor(.red)
                 }
                 
             } else {
-                // ANA GİRİŞ EKRANI
-                VStack(spacing: 30) {
-                    Image(systemName: "lock.shield.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(.blue)
-                    
-                    Text("DummyBank Pro")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    
-                    if let error = authManager.errorMessage {
-                        Text(error)
-                            .foregroundColor(.red)
-                            .font(.callout)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-                    
-                    // 1. Standart Face ID Butonu
-                    Button(action: {
-                        authManager.authenticateUser()
-                    }) {
-                        HStack {
-                            Image(systemName: "faceid")
-                                .font(.title2)
-                            Text("Face ID (Logic) ile Giriş")
-                                .fontWeight(.semibold)
+                // ANA GİRİŞ EKRANI - 5 TARGET PANELİ
+                ScrollView {
+                    VStack(spacing: 25) {
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.system(size: 60))
+                            .foregroundColor(.blue)
+                            .padding(.top, 40)
+                        
+                        Text("DummyBank Enterprise SECURE")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        
+                        if let error = authManager.errorMessage {
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.custom("Courier", size: 14))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                                .background(Color.red.opacity(0.1))
+                                .cornerRadius(5)
                         }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(15)
-                        .padding(.horizontal, 40)
-                    }
-                    
-                    // 2. Kamera Tabanlı Liveness Butonu (PHASE 3 HEDEFİ)
-                    Button(action: {
-                        showingCamera = true
-                    }) {
-                        HStack {
-                            Image(systemName: "camera.viewfinder")
-                                .font(.title2)
-                            Text("Canlı Kamera (Liveness) ile Giriş")
-                                .fontWeight(.semibold)
+                        
+                        VStack(alignment: .leading, spacing: 15) {
+                            Text("TARGET: LocalAuthentication (LAContext)")
+                                .font(.caption).foregroundColor(.gray)
+                            
+                            // TARGET 1: Biometric
+                            Button(action: {
+                                authManager.authenticateUser()
+                            }) {
+                                HStack {
+                                    Image(systemName: "faceid")
+                                    Text("Test Target A: Face ID Gate")
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .border(Color.blue.opacity(0.3), width: 1)
+                            }
+                            
+                            Text("TARGET: AVFoundation (Camera)")
+                                .font(.caption).foregroundColor(.gray).padding(.top, 10)
+                            
+                            // TARGET 2: Camera Overide
+                            Button(action: {
+                                showingCamera = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "camera.fill")
+                                    Text("Test Target B: Raw Camera Feed")
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .border(Color.teal.opacity(0.3), width: 1)
+                            }
+                            
+                            Text("TARGET: CoreML/Vision (AI Verification)")
+                                .font(.caption).foregroundColor(.gray).padding(.top, 10)
+                            
+                            // TARGET 3: Vision Overide (Simülatörde Camera içinde test edilir, ancak ayrı bir buton mantığı koyabiliriz)
+                            Button(action: {
+                                showingCamera = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "eye.fill")
+                                    Text("Test Target C: Liveness Scan")
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .border(Color.pink.opacity(0.3), width: 1)
+                            }
+                            
+                            
+                            Text("ENVIRONMENT SHIELD")
+                                .font(.caption).foregroundColor(.gray).padding(.top, 10)
+                            
+                            // TARGET 4: Jailbreak Detection (Auth ile birleşiktir, tetiklemek için Auth'a basılır)
+                            Button(action: {
+                                authManager.authenticateUser()
+                            }) {
+                                HStack {
+                                    Image(systemName: "lock.shield")
+                                    Text("Test Target D: Anti-Tamper Core")
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "chevron.right").font(.caption)
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.white.opacity(0.05))
+                                .border(Color.yellow.opacity(0.3), width: 1)
+                            }
                         }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange)
-                        .cornerRadius(15)
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, 20)
                     }
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 }
 
