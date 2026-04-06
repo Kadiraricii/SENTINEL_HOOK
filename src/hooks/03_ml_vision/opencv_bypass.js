@@ -1,40 +1,47 @@
 /**
  * Sentinel Hook - OpenCV & DNN Security Bypass (Phase 4.4)
- * Hedef: C++ / Native katmanında OpenCV (cv::dnn) kullanarak Liveness Tespiti yapan sistemler.
+ * FIXED: Simulator detection uses UIDevice.model (works on Apple Silicon arm64).
  */
 
-console.log("[🌟] SENTINEL HOOK: OpenCV DNN (C++ Native) Bypass Yükleniyor...");
+console.log("[🌟] SENTINEL HOOK: OpenCV DNN (C++ Native) Bypass Active...");
 
-if (Process.arch !== "arm64" && Process.arch !== "arm") {
-    console.log("[-] OpenCV Bypass genel olarak ARM mimarisizi hedefler.");
+var isSimulator = false;
+try {
+    if (ObjC.available) {
+        var model = ObjC.classes.UIDevice.currentDevice().model().toString();
+        isSimulator = model.indexOf("Simulator") !== -1;
+    }
+} catch(e) {
+    isSimulator = (Process.arch === "x86_64");
 }
 
-// Android'te genelde libopencv_java4.so veya bir custom JNI .so dosyası olur
-// iOS'te ise Framework/Dylib içerisinde yer alır.
-
-    var dlopenPtr = Module.findExportByName(null, "dlopen");
-    if (dlopenPtr && typeof Interceptor === 'object' && typeof Interceptor.attach === 'function') {
-        Interceptor.attach(dlopenPtr, {
-            onEnter: function(args) {
-                try {
-                    this.libName = args[0].readUtf8String();
-                } catch(e) { this.libName = null; }
-            },
-            onLeave: function(retval) {
-                if (this.libName && (this.libName.indexOf("opencv") !== -1 || this.libName.indexOf("cv2") !== -1)) {
-                    console.log("[💥] SENTINEL YAKALADI: OpenCV Kütüphanesi Yüklendi: " + this.libName);
-                    hookOpenCV();
+if (isSimulator) {
+    console.log("[i] ENV: Simulator — OpenCV native hook in passive mode (no ARM hardware).");
+} else {
+    // Monitor dlopen for OpenCV library loading (physical device only)
+    try {
+        var dlopenPtr = Module.findExportByName(null, "dlopen");
+        if (dlopenPtr && !dlopenPtr.isNull()) {
+            Interceptor.attach(dlopenPtr, {
+                onEnter: function(args) {
+                    try { this.libName = args[0].readUtf8String(); } catch(e) { this.libName = null; }
+                },
+                onLeave: function(retval) {
+                    if (this.libName && (this.libName.indexOf("opencv") !== -1 || this.libName.indexOf("cv2") !== -1)) {
+                        console.log("[💥] SENTINEL: OpenCV library detected → " + this.libName);
+                        hookOpenCV();
+                    }
                 }
-            }
-        });
+            });
+            console.log("[+] OPENCV: Library monitor armed on dlopen.");
+        }
+    } catch(err) {
+        console.log("[-] OPENCV ERROR: dlopen hook failed - " + err.message);
     }
+}
 
 function hookOpenCV() {
     try {
-        // Hedef fonksiyon: cv::dnn::Net::forward()
-        // Görüntüyü alır ve Yapay Zeka modelinden (Tensorflow/Caffe) geçirip liveness skoru döner.
-        // C++ adı mangled (karmaşık) olduğu için ismin bir kısmını tarıyoruz.
-        
         var modules = Process.enumerateModules();
         for (var i = 0; i < modules.length; i++) {
             var m = modules[i];
@@ -43,15 +50,11 @@ function hookOpenCV() {
                 for (var j = 0; j < exports.length; j++) {
                     var exp = exports[j];
                     if (exp.type !== 'function') continue;
-                    
-                    var funcName = exp.name;
-                    
-                    if (funcName.indexOf("forward") !== -1 && funcName.indexOf("dnn") !== -1) {
-                        console.log("[+] OpenCV DeepNeuralNetwork Forward Fonksiyonu Bulundu: " + funcName);
-                        
+                    if (exp.name.indexOf("forward") !== -1 && exp.name.indexOf("dnn") !== -1) {
+                        console.log("[+] OpenCV DNN Forward found: " + exp.name);
                         Interceptor.attach(exp.address, {
                             onLeave: function(retval) {
-                                console.log("[💥] SENTINEL: OpenCV AI sonucu döndürülüyor... (Bypass Aktif)");
+                                console.log("[💥] SENTINEL: OpenCV AI result intercepted. (Bypass Active)");
                             }
                         });
                     }
@@ -59,6 +62,6 @@ function hookOpenCV() {
             }
         }
     } catch(e) {
-        console.log("[-] OpenCV Hook Başarısız.");
+        console.log("[-] OpenCV hook failed: " + e.message);
     }
 }

@@ -6,31 +6,27 @@ class BiometricAuthManager: ObservableObject {
     @Published var isAuthenticated = false
     @Published var errorMessage: String?
     
+    // Guard flag — prevents the retry loop from firing after success
+    private var bypassAttemptInProgress = false
+    
     func authenticateUser() {
+        guard !bypassAttemptInProgress else { return }
         
+        // Jailbreak simulation check (visible hook target for Frida)
         let jailbreakFilePath = "/Applications/Safari.app"
-        var isJailbroken = false
-        
         if FileManager.default.fileExists(atPath: jailbreakFilePath) {
-            isJailbroken = true
-        }
-        
-        if isJailbroken {
-            self.errorMessage = "🚨 SECURITY BREACH: System integrity compromised. Access denied."
-            // In a real app we'd return here, but for our Sentinel sim, we allow bypass to proceed
-            // to show that our anti-tamper or biometric hook can override even this.
-            // (Abstracted for the simulation demo flow)
+            self.errorMessage = "🚨 SECURITY: Jailbreak artifact detected."
         }
         
         let context = LAContext()
         var error: NSError?
         
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            
+            // Real device or Frida has already hooked canEvaluatePolicy → YES
             let reason = "Secure Vault Access requires Biometric signature."
-            
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] success, authenticationError in
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] success, _ in
                 DispatchQueue.main.async {
+                    self?.bypassAttemptInProgress = false
                     if success {
                         print("[LOCAL_AUTH] Biometric signature ACCEPTED.")
                         self?.isAuthenticated = true
@@ -41,8 +37,35 @@ class BiometricAuthManager: ObservableObject {
                 }
             }
         } else {
+            // SIMULATOR PATH: Frida hooks canEvaluatePolicy in the background.
+            // We retry ONCE after a short delay to give the hook time to register.
+            bypassAttemptInProgress = true
+            print("[LOCAL_AUTH] Biometric HW unavailable — invoking evaluatePolicy as Frida target.")
             DispatchQueue.main.async {
-                self.errorMessage = "[SYSTEM] Biometric hardware unavailable. (Simulation Mode)"
+                self.errorMessage = "⚡ AWAITING FRIDA SIGNAL: Inject 'BIO-LOGIC' to bypass."
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+                guard let self = self else { return }
+                let ctx2 = LAContext()
+                var err2: NSError?
+                if ctx2.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &err2) {
+                    let reason2 = "Secure Vault Access requires Biometric signature."
+                    ctx2.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason2) { [weak self] success, _ in
+                        DispatchQueue.main.async {
+                            self?.bypassAttemptInProgress = false
+                            if success {
+                                print("[LOCAL_AUTH] FRIDA BYPASS: Authenticated!")
+                                self?.isAuthenticated = true
+                            } else {
+                                self?.errorMessage = "Injection failed. Ensure BIO-LOGIC module is active."
+                            }
+                        }
+                    }
+                } else {
+                    self.bypassAttemptInProgress = false
+                    self.errorMessage = "No Frida signal received. Module not active."
+                }
             }
         }
     }

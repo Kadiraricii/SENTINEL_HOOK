@@ -138,6 +138,48 @@ body { background-color: var(--bg); color: var(--text); overflow-y: auto; overfl
 
 .intel-report { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; }
 
+/* LIVE FEED PANEL (Phase 10.4) */
+.live-feed-panel { padding: 16px; }
+
+.feed-viewport {
+  background: #000;
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 10px;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.feed-active { width: 100%; height: 100%; position: relative;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.02) 2px, rgba(0,255,136,0.02) 4px);
+}
+
+.feed-scan-line {
+  position: absolute; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,255,136,0.8), transparent);
+  animation: scan 2.5s linear infinite;
+  box-shadow: 0 0 8px rgba(0,255,136,0.5);
+}
+@keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+.feed-crosshair { position: absolute; inset: 0; pointer-events: none; }
+.ch-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(0,255,136,0.2); }
+.ch-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(0,255,136,0.2); }
+.ch-corner { position: absolute; width: 12px; height: 12px; border-color: rgba(0,255,136,0.6); border-style: solid; }
+.ch-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+.ch-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.ch-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+.ch-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+.feed-overlay-text { position: absolute; top: 10px; left: 14px; font-size: 0.65rem; line-height: 1.8; }
+
+.feed-idle {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: rgba(255,255,255,0.15); font-size: 0.7rem;
+  text-align: center; line-height: 1.8;
+}
+
 .lock-overlay { 
   position: absolute; inset: 0; background: rgba(5,5,7,0.9); backdrop-filter: blur(8px); 
   display: flex; flex-direction: column; align-items: center; justify-content: center; 

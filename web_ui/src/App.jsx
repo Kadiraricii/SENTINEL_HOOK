@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Terminal, Shield, Play, Square, Crosshair, Fingerprint, Lock, Camera, Eye, Zap, Cpu, Activity, RefreshCw, ChevronRight, Info, Tablet, Smartphone, Laptop, Trash2 } from 'lucide-react';
+import { Terminal, Shield, Play, Square, Crosshair, Fingerprint, Lock, Camera, Eye, Zap, Cpu, Activity, RefreshCw, ChevronRight, Info, Tablet, Smartphone, Laptop, Trash2, Radio } from 'lucide-react';
 import './index.css';
 
 export default function App() {
@@ -10,8 +10,11 @@ export default function App() {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [liveFrameCount, setLiveFrameCount] = useState(0);
+  const [lastFrameLayer, setLastFrameLayer] = useState(null);
   
   const logEndRef = useRef(null);
+  const consoleRef = useRef(null);
   const ws = useRef(null);
 
   useEffect(() => {
@@ -28,6 +31,15 @@ export default function App() {
 
       socket.onmessage = (event) => {
         const msg = event.data;
+
+        // Live Feed: Parse FRAME: tags emitted by kernel hook
+        if (msg.startsWith('[FRAME:')) {
+          const parts = msg.replace('[FRAME:', '').replace(']', '').split(':');
+          setLastFrameLayer(parts[0] || 'UNKNOWN');
+          setLiveFrameCount(prev => prev + 1);
+          return; // Don't add raw frame data to console
+        }
+
         setLogs((prev) => [...prev, msg]);
 
         // DURUM SENKRONIZASYONU
@@ -66,7 +78,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll ONLY inside the console panel, not the whole page
+    if (consoleRef.current) {
+      consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+    }
   }, [logs]);
 
   const scanDevices = async () => {
@@ -144,7 +159,8 @@ export default function App() {
     { id: 'vision', name: 'AI VISION SPOOF', icon: <Eye size={24} />, color: '#cf6679', intel: 'Manipulates VNDetectFaceRectanglesRequest output to defeat AI liveness detection. Spoofing: VNFaceObservation.' },
     { id: 'security', name: 'DETECTION SHIELD', icon: <Zap size={24} />, color: '#ffd700', intel: 'Masks jailbreak artifacts and prevents Frida-related environment detection. Masking: Sysctl/ProcFS.' },
     { id: 'deepfake', name: 'DEEPFAKE PIPELINE', icon: <Crosshair size={24} />, color: '#ff5555', intel: 'Real-time OpenCV dynamic face overlay piped directly into CVPixelBuffer. Targets ML Liveness Checks.' },
-    { id: 'mfachain', name: 'MFA CHAIN BYPASS', icon: <Activity size={24} />, color: '#ff2299', intel: 'Phase 10.2: Simulataneously defeats Biometric (LAContext) and intercepts subsequent OTP/SMS Vaults.' },
+    { id: 'mfachain', name: 'MFA CHAIN BYPASS', icon: <Activity size={24} />, color: '#ff2299', intel: 'Phase 10.2: Simultaneously defeats Biometric (LAContext) and intercepts subsequent OTP/SMS Vaults.' },
+    { id: 'kernelcam', name: 'KERNEL CAM HOOK', icon: <Radio size={24} />, color: '#00ff88', intel: 'Phase 10.3: Hooks IOSurface + CMSampleBuffer + VTCompression below AVFoundation. Kernel-boundary interception.' },
   ];
 
   return (
@@ -214,6 +230,37 @@ export default function App() {
             </div>
           </div>
 
+          {/* Phase 10.4: Live Sensor Feed Panel */}
+          <div className="glass-panel live-feed-panel">
+            <div className="panel-header" style={{ justifyContent: 'space-between', display: 'flex', width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Radio size={16} color={activeModules.includes('kernelcam') || activeModules.includes('camera') || activeModules.includes('deepfake') ? '#00ff88' : 'var(--text-muted)'} />
+                <h3 className="panel-title" style={{ margin: 0, fontSize: '0.85rem' }}>Live Sensor Feed <span className="mono" style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>— Remote Camera Monitor (10.4)</span></h3>
+              </div>
+              <div className="mono" style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>FRAMES: {liveFrameCount.toString().padStart(6, '0')}</div>
+            </div>
+            <div className="feed-viewport">
+              {(activeModules.includes('kernelcam') || activeModules.includes('camera') || activeModules.includes('deepfake')) ? (
+                <div className="feed-active">
+                  <div className="feed-scan-line"></div>
+                  <div className="feed-crosshair">
+                    <div className="ch-h"></div><div className="ch-v"></div>
+                    <div className="ch-corner tl"></div><div className="ch-corner tr"></div>
+                    <div className="ch-corner bl"></div><div className="ch-corner br"></div>
+                  </div>
+                  <div className="feed-overlay-text mono">
+                    <div style={{ color: '#00ff88' }}>◉ REC  SENTINEL_CAM_FEED</div>
+                    <div style={{ color: 'var(--text-muted)' }}>LAYER: {lastFrameLayer || 'IOSURFACE'}</div>
+                    <div style={{ color: 'var(--text-muted)' }}>FRAMES_INTERCEPTED: {liveFrameCount}</div>
+                    <div style={{ color: '#ff5555', marginTop: '8px' }}>⚠ SYNTHETIC PAYLOAD ACTIVE</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="feed-idle mono">[ NO SENSOR SIGNAL ]<br/>Enable CAMERA / DEEPFAKE / KERNEL module</div>
+              )}
+            </div>
+          </div>
+
           <div className="glass-panel console-panel">
             <div className="panel-header" style={{ justifyContent: 'space-between', display: 'flex', width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -225,7 +272,7 @@ export default function App() {
                     <div className="active-sessions-badge mono">SESS: {activeModules.length}</div>
                 </div>
             </div>
-            <div className="console-stream">
+            <div className="console-stream" ref={consoleRef}>
               {logs.map((log, i) => (
                 <div key={i} className={`log-line-large ${log.includes('[!]') || log.includes('ERROR') ? 'log-error' : ''}`}>
                    <span className="log-ts mono">{new Date().toLocaleTimeString()}</span>

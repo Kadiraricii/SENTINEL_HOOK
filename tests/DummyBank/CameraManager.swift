@@ -17,6 +17,34 @@ class CameraManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleB
     private let context = CIContext()
     private let sequenceHandler = VNSequenceRequestHandler()
     
+    // MARK: - Frida Hook Targets
+    // These @objc dynamic methods are the hook surface for Sentinel JS payloads.
+    // Calling these from Frida directly updates Swift @Published state → UI reacts.
+    
+    @objc dynamic func sentinelCameraBypass() {
+        DispatchQueue.main.async {
+            self.isCameraAuthenticated = true
+            self.errorMessage = nil
+            print("[SENTINEL] Camera bypass activated via Frida.")
+        }
+    }
+    
+    @objc dynamic func sentinelVisionBypass() {
+        DispatchQueue.main.async {
+            self.isCameraAuthenticated = true
+            self.aiFaceDetected = true
+            self.aiBlinkDetected = true
+            print("[SENTINEL] Vision AI bypass activated via Frida.")
+        }
+    }
+    
+    @objc dynamic func sentinelKernelBypass() {
+        DispatchQueue.main.async {
+            self.isCameraAuthenticated = true
+            print("[SENTINEL] Kernel camera bypass activated via Frida.")
+        }
+    }
+    
     override init() {
         super.init()
         checkPermission()
@@ -132,6 +160,16 @@ class CameraManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleB
         
         DispatchQueue.main.async {
             self.currentFrame = cgImage
+        }
+    }
+    
+    func stopSession() {
+        DispatchQueue.global().async {
+            self.captureSession.stopRunning()
+        }
+        DispatchQueue.main.async {
+            self.currentFrame = nil
+            self.errorMessage = nil
         }
     }
 }

