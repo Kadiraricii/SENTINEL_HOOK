@@ -242,6 +242,7 @@ Sentinel_Hook/
 │       ├── camera_hijacking.md
 │       └── cloaking_stratagem.md
 ├── inject_hooks.py                 # Module bundler & PID manager
+├── start_sentinel.sh               # Automated macOS start script
 ├── README.md
 ├── ROADMAP.md
 ├── CHANGELOG.md
@@ -262,7 +263,18 @@ Sentinel_Hook/
 | Python | ≥ 3.12 | Hook bundler |
 | Xcode | ≥ 15 | DummyBank build & simulator |
 
-### 1. Start the Rust Backend
+### ⚡ Automated Quick Start (macOS Only)
+
+If you are on macOS, you can launch both the Rust backend and the React dashboard in dedicated terminal tabs with a single command:
+
+```bash
+chmod +x start_sentinel.sh
+./start_sentinel.sh
+```
+
+---
+
+### 🛠️ Manual Step-by-Step Start
 
 ```bash
 cd sentinel-rust
