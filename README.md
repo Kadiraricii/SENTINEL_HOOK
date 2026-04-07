@@ -63,7 +63,7 @@
 
 ### Full Project Walkthrough
 
-> **Video:** [`demo/project-demo.mov`](./demo/project-demo.mov) — Complete end-to-end demo (recorded by project author)  
+> **Video:** [`demo/project-demo.mp4`](./demo/project-demo.mp4) — Complete end-to-end demo (recorded by project author)  
 > **Environment:** iOS 17 Simulator · Frida 17.x · Rust Backend · React Tactical Dashboard
 
 The demo covers the full Sentinel Hook workflow:
